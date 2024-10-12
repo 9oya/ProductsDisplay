@@ -5,4 +5,10 @@
 //  Created by 9oya on 10/12/24.
 //
 
-import Foundation
+import Moya
+import RxSwift
+
+protocol NetworkManager {
+
+    func request(_ endpoing: TargetType) -> Single<Response>
+}

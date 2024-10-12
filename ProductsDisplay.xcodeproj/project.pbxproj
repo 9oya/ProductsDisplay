@@ -53,6 +53,9 @@
 		BF772ED32CBA4E6000187EA8 /* HomeReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772ED22CBA4E6000187EA8 /* HomeReactor.swift */; };
 		BF772ED62CBA4E7700187EA8 /* RxFlow in Frameworks */ = {isa = PBXBuildFile; productRef = BF772ED52CBA4E7700187EA8 /* RxFlow */; };
 		BF772ED92CBA52AB00187EA8 /* HomeImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772ED82CBA52AB00187EA8 /* HomeImpl.swift */; };
+		BF772EDB2CBA59FA00187EA8 /* LoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EDA2CBA59FA00187EA8 /* LoggerPlugin.swift */; };
+		BF772EDD2CBA5A7800187EA8 /* ProductListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EDC2CBA5A7800187EA8 /* ProductListAPI.swift */; };
+		BF772EE42CBA61E000187EA8 /* Extension+ViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +107,9 @@
 		BF772ED02CBA4E5600187EA8 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BF772ED22CBA4E6000187EA8 /* HomeReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeReactor.swift; sourceTree = "<group>"; };
 		BF772ED82CBA52AB00187EA8 /* HomeImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeImpl.swift; sourceTree = "<group>"; };
+		BF772EDA2CBA59FA00187EA8 /* LoggerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerPlugin.swift; sourceTree = "<group>"; };
+		BF772EDC2CBA5A7800187EA8 /* ProductListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListAPI.swift; sourceTree = "<group>"; };
+		BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+ViewController+Rx.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +179,7 @@
 		BF772E222CBA2E9D00187EA8 /* ProductsDisplay */ = {
 			isa = PBXGroup;
 			children = (
+				BF772EDE2CBA61A200187EA8 /* DesignSystem */,
 				BF772E562CBA35F400187EA8 /* Application */,
 				BF772E592CBA36B500187EA8 /* Data */,
 				BF772E972CBA4AA200187EA8 /* Domain */,
@@ -230,6 +237,7 @@
 		BF772E572CBA36AC00187EA8 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				BF772EDF2CBA61BB00187EA8 /* BasePresentation */,
 				BF772EBD2CBA4C3000187EA8 /* Home */,
 			);
 			path = Presentation;
@@ -273,6 +281,7 @@
 			isa = PBXGroup;
 			children = (
 				BF772E902CBA487900187EA8 /* MoyaNetworkManager.swift */,
+				BF772EDA2CBA59FA00187EA8 /* LoggerPlugin.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -409,6 +418,7 @@
 			isa = PBXGroup;
 			children = (
 				BF772EB52CBA4BD500187EA8 /* RemoteProductListDataSourceImpl.swift */,
+				BF772EDC2CBA5A7800187EA8 /* ProductListAPI.swift */,
 			);
 			path = Remote;
 			sourceTree = "<group>";
@@ -497,6 +507,37 @@
 				BF772ED22CBA4E6000187EA8 /* HomeReactor.swift */,
 			);
 			path = Screen;
+			sourceTree = "<group>";
+		};
+		BF772EDE2CBA61A200187EA8 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		BF772EDF2CBA61BB00187EA8 /* BasePresentation */ = {
+			isa = PBXGroup;
+			children = (
+				BF772EE12CBA61CB00187EA8 /* Sources */,
+			);
+			path = BasePresentation;
+			sourceTree = "<group>";
+		};
+		BF772EE12CBA61CB00187EA8 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				BF772EE22CBA61D000187EA8 /* Extensions */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		BF772EE22CBA61D000187EA8 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -682,10 +723,13 @@
 				BF772EB42CBA4BCC00187EA8 /* ProductListRepositoryImpl.swift in Sources */,
 				BF772EB02CBA4BAB00187EA8 /* ProductListEntity.swift in Sources */,
 				BF772ED32CBA4E6000187EA8 /* HomeReactor.swift in Sources */,
+				BF772EDB2CBA59FA00187EA8 /* LoggerPlugin.swift in Sources */,
 				BF772EB82CBA4BE400187EA8 /* ProductListDTO.swift in Sources */,
 				BF772E952CBA48A200187EA8 /* Extension+Container+Networking.swift in Sources */,
 				BF772EB62CBA4BD500187EA8 /* RemoteProductListDataSourceImpl.swift in Sources */,
+				BF772EDD2CBA5A7800187EA8 /* ProductListAPI.swift in Sources */,
 				BF772EBA2CBA4BF700187EA8 /* Extension+Container+ProudctListData.swift in Sources */,
+				BF772EE42CBA61E000187EA8 /* Extension+ViewController+Rx.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

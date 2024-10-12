@@ -5,4 +5,9 @@
 //  Created by 9oya on 10/12/24.
 //
 
-import Foundation
+import RxSwift
+
+protocol RemoteProductListDataSource {
+
+    func fetchProducts() -> Single<ProductListDTO>
+}

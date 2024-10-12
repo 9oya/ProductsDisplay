@@ -16,25 +16,41 @@ class HomeReactor: Reactor, Stepper {
 
     var initialState: State
     var steps: PublishRelay<Step> = PublishRelay<Step>()
+    private let productListUseCase: ProductListUseCase
+
+    init(productListUseCase: ProductListUseCase) {
+        self.productListUseCase = productListUseCase
+        self.initialState = State()
+    }
 
     struct State {
+        var products: ProductListEntity?
     }
 
     enum Action {
+        case viewDidLoad
     }
 
     enum Mutation {
-    }
-
-    init() {
-        initialState = State()
+        case setProducts(ProductListEntity)
     }
 
     func mutate(action: Action) -> Observable<Mutation> {
-        return Observable.empty()
+        switch action {
+        case .viewDidLoad:
+            return productListUseCase
+                .fetchProducts()
+                .asObservable()
+                .map { .setProducts($0) }
+        }
     }
 
     func reduce(state: State, mutation: Mutation) -> State {
-        return state
+        var newState = state
+        switch mutation {
+        case .setProducts(let entity):
+            newState.products = entity
+        }
+        return newState
     }
 }

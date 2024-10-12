@@ -24,6 +24,10 @@ class HomeViewController: UIViewController, View {
     }
 
     func bindAction(_ reactor: HomeReactor) {
+        rx.viewDidLoad
+            .map { _ in Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 
     func bindState(_ reactor: HomeReactor) {

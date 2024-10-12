@@ -9,6 +9,7 @@ import UIKit
 
 import RxFlow
 import RxSwift
+import Factory
 
 class HomeFlow: Flow {
     var root: Presentable {
@@ -31,9 +32,11 @@ class HomeFlow: Flow {
     }
 
     private func navigateToHome() -> FlowContributors {
-        let homeReactor = HomeReactor()
+        let productListUseCase = Container.shared.productListUseCase()
+        let homeReactor = HomeReactor(productListUseCase: productListUseCase)
         let homeViewController = HomeViewController()
         homeViewController.reactor = homeReactor
+        homeViewController.viewDidLoad()
 
         rootViewController.setViewControllers(
             [homeViewController],
