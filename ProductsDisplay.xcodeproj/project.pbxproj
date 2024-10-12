@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		BF772E242CBA2E9D00187EA8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E232CBA2E9D00187EA8 /* AppDelegate.swift */; };
 		BF772E262CBA2E9D00187EA8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E252CBA2E9D00187EA8 /* SceneDelegate.swift */; };
-		BF772E282CBA2E9D00187EA8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E272CBA2E9D00187EA8 /* ViewController.swift */; };
 		BF772E2D2CBA2E9F00187EA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF772E2C2CBA2E9F00187EA8 /* Assets.xcassets */; };
 		BF772E302CBA2E9F00187EA8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = BF772E2F2CBA2E9F00187EA8 /* Base */; };
 		BF772E3B2CBA2EA000187EA8 /* ProductsDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E3A2CBA2EA000187EA8 /* ProductsDisplayTests.swift */; };
@@ -18,7 +17,6 @@
 		BF772E612CBA47A400187EA8 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E602CBA47A400187EA8 /* RxBlocking */; };
 		BF772E632CBA47A400187EA8 /* RxBlocking-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E622CBA47A400187EA8 /* RxBlocking-Dynamic */; };
 		BF772E652CBA47A400187EA8 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E642CBA47A400187EA8 /* RxCocoa */; };
-		BF772E672CBA47A400187EA8 /* RxCocoa-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E662CBA47A400187EA8 /* RxCocoa-Dynamic */; };
 		BF772E692CBA47A400187EA8 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E682CBA47A400187EA8 /* RxRelay */; };
 		BF772E6C2CBA47B300187EA8 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E6B2CBA47B300187EA8 /* ReactorKit */; };
 		BF772E6F2CBA47D400187EA8 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E6E2CBA47D400187EA8 /* CombineMoya */; };
@@ -34,7 +32,6 @@
 		BF772E872CBA482000187EA8 /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E862CBA482000187EA8 /* RxGesture */; };
 		BF772E8A2CBA483400187EA8 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E892CBA483400187EA8 /* Toast */; };
 		BF772E8D2CBA484600187EA8 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E8C2CBA484600187EA8 /* SnapKit */; };
-		BF772E8F2CBA484600187EA8 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = BF772E8E2CBA484600187EA8 /* SnapKit-Dynamic */; };
 		BF772E912CBA487900187EA8 /* MoyaNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E902CBA487900187EA8 /* MoyaNetworkManager.swift */; };
 		BF772E932CBA488400187EA8 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E922CBA488400187EA8 /* NetworkManager.swift */; };
 		BF772E952CBA48A200187EA8 /* Extension+Container+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772E942CBA48A200187EA8 /* Extension+Container+Networking.swift */; };
@@ -55,6 +52,7 @@
 		BF772ED12CBA4E5600187EA8 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772ED02CBA4E5600187EA8 /* HomeViewController.swift */; };
 		BF772ED32CBA4E6000187EA8 /* HomeReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772ED22CBA4E6000187EA8 /* HomeReactor.swift */; };
 		BF772ED62CBA4E7700187EA8 /* RxFlow in Frameworks */ = {isa = PBXBuildFile; productRef = BF772ED52CBA4E7700187EA8 /* RxFlow */; };
+		BF772ED92CBA52AB00187EA8 /* HomeImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772ED82CBA52AB00187EA8 /* HomeImpl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,7 +76,6 @@
 		BF772E202CBA2E9D00187EA8 /* ProductsDisplay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProductsDisplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF772E232CBA2E9D00187EA8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF772E252CBA2E9D00187EA8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		BF772E272CBA2E9D00187EA8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		BF772E2C2CBA2E9F00187EA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF772E2F2CBA2E9F00187EA8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BF772E312CBA2E9F00187EA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -106,6 +103,7 @@
 		BF772ECD2CBA4E4800187EA8 /* HomeFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFlow.swift; sourceTree = "<group>"; };
 		BF772ED02CBA4E5600187EA8 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BF772ED22CBA4E6000187EA8 /* HomeReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeReactor.swift; sourceTree = "<group>"; };
+		BF772ED82CBA52AB00187EA8 /* HomeImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeImpl.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,9 +115,7 @@
 				BF772E782CBA47E900187EA8 /* Nuke in Frameworks */,
 				BF772E732CBA47D400187EA8 /* ReactiveMoya in Frameworks */,
 				BF772E692CBA47A400187EA8 /* RxRelay in Frameworks */,
-				BF772E672CBA47A400187EA8 /* RxCocoa-Dynamic in Frameworks */,
 				BF772ED62CBA4E7700187EA8 /* RxFlow in Frameworks */,
-				BF772E8F2CBA484600187EA8 /* SnapKit-Dynamic in Frameworks */,
 				BF772E712CBA47D400187EA8 /* Moya in Frameworks */,
 				BF772E812CBA47F700187EA8 /* Then in Frameworks */,
 				BF772E6C2CBA47B300187EA8 /* ReactorKit in Frameworks */,
@@ -235,7 +231,6 @@
 			isa = PBXGroup;
 			children = (
 				BF772EBD2CBA4C3000187EA8 /* Home */,
-				BF772E272CBA2E9D00187EA8 /* ViewController.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -466,6 +461,7 @@
 			children = (
 				BF772ECF2CBA4E4B00187EA8 /* Screen */,
 				BF772ECB2CBA4E2200187EA8 /* Flow */,
+				BF772ED82CBA52AB00187EA8 /* HomeImpl.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -521,7 +517,6 @@
 			name = ProductsDisplay;
 			packageProductDependencies = (
 				BF772E642CBA47A400187EA8 /* RxCocoa */,
-				BF772E662CBA47A400187EA8 /* RxCocoa-Dynamic */,
 				BF772E682CBA47A400187EA8 /* RxRelay */,
 				BF772E6B2CBA47B300187EA8 /* ReactorKit */,
 				BF772E6E2CBA47D400187EA8 /* CombineMoya */,
@@ -537,7 +532,6 @@
 				BF772E862CBA482000187EA8 /* RxGesture */,
 				BF772E892CBA483400187EA8 /* Toast */,
 				BF772E8C2CBA484600187EA8 /* SnapKit */,
-				BF772E8E2CBA484600187EA8 /* SnapKit-Dynamic */,
 				BF772ED52CBA4E7700187EA8 /* RxFlow */,
 			);
 			productName = ProductsDisplay;
@@ -671,12 +665,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF772EBC2CBA4C0F00187EA8 /* RemoteProductListDataSource.swift in Sources */,
-				BF772E282CBA2E9D00187EA8 /* ViewController.swift in Sources */,
 				BF772ECE2CBA4E4800187EA8 /* HomeFlow.swift in Sources */,
 				BF772EAC2CBA4B9900187EA8 /* ProductListUseCase.swift in Sources */,
 				BF772E242CBA2E9D00187EA8 /* AppDelegate.swift in Sources */,
 				BF772ED12CBA4E5600187EA8 /* HomeViewController.swift in Sources */,
 				BF772EAE2CBA4BA200187EA8 /* ProductListRepository.swift in Sources */,
+				BF772ED92CBA52AB00187EA8 /* HomeImpl.swift in Sources */,
 				BF772E932CBA488400187EA8 /* NetworkManager.swift in Sources */,
 				BF772EC52CBA4DF700187EA8 /* Home.swift in Sources */,
 				BF772EB22CBA4BB700187EA8 /* Extension+Container+ProductListDomain.swift in Sources */,
@@ -1128,11 +1122,6 @@
 			package = BF772E5F2CBA47A400187EA8 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
 		};
-		BF772E662CBA47A400187EA8 /* RxCocoa-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BF772E5F2CBA47A400187EA8 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = "RxCocoa-Dynamic";
-		};
 		BF772E682CBA47A400187EA8 /* RxRelay */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BF772E5F2CBA47A400187EA8 /* XCRemoteSwiftPackageReference "RxSwift" */;
@@ -1207,11 +1196,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BF772E8B2CBA484600187EA8 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		BF772E8E2CBA484600187EA8 /* SnapKit-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BF772E8B2CBA484600187EA8 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = "SnapKit-Dynamic";
 		};
 		BF772ED52CBA4E7700187EA8 /* RxFlow */ = {
 			isa = XCSwiftPackageProductDependency;
