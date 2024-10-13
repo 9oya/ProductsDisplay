@@ -1,5 +1,5 @@
 //
-//  BannerCollectionCell.swift
+//  StyleCollectionCell.swift
 //  ProductsDisplay
 //
 //  Created by 9oya on 10/13/24.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-class BannerCollectionCell: UICollectionViewCell {
+class StyleCollectionCell: UICollectionViewCell {
 
     var imageView: UIImageView!
 
@@ -21,7 +21,7 @@ class BannerCollectionCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = .green
-        
+
         imageView = UIImageView().then {
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
@@ -38,7 +38,7 @@ class BannerCollectionCell: UICollectionViewCell {
     }
 
     func apply(imageURL: String?) {
-        if let urlString = imageURL, 
+        if let urlString = imageURL,
             let imageURL = URL(string: urlString) {
             UIHelper.loadImage(imageURL: imageURL, imageView: imageView)
         }

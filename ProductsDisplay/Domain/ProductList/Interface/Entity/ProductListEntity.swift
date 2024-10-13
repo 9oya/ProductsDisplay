@@ -6,31 +6,12 @@
 //
 
 import Foundation
-import UIKit
 
 enum ContentType: String {
     case banner = "BANNER"
     case grid = "GRID"
     case scroll = "SCROLL"
     case style = "STYLE"
-
-    var columnCount: Int {
-        switch self {
-        case .banner:
-            return 1
-        default:
-            return 2
-        }
-    }
-
-    func orthogonalScrollingBehavior() -> UICollectionLayoutSectionOrthogonalScrollingBehavior {
-        switch self {
-        case .banner:
-            return .groupPagingCentered
-        default:
-            return .none
-        }
-    }
 }
 
 enum FooterType: String {
@@ -69,9 +50,9 @@ struct ProductListEntity: Equatable {
 
     struct Contents: Equatable {
         let type: ContentType
-        var banners: [Banner]?
-        var goods: [Goods]?
-        var styles: [Style]?
+        let banners: [Banner]?
+        let goods: [Goods]?
+        let styles: [Style]?
 
         init(type: String, banners: [Banner]?, goods: [Goods]?, styles: [Style]?) {
             self.type = ContentType(rawValue: type)!

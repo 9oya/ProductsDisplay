@@ -26,7 +26,7 @@ class HomeReactor: Reactor, Stepper {
 
     struct State {
         var products: ProductListEntity?
-        var items: [Item]?
+        var sections: [SectionModel]?
     }
 
     enum Action {
@@ -52,6 +52,33 @@ class HomeReactor: Reactor, Stepper {
         switch mutation {
         case .setProducts(let entity):
             newState.products = entity
+
+            let sections: [SectionModel] = entity.data.map { data in
+                if let _banners = data.contents.banners {
+                    return .init(
+                        contentType: data.contents.type,
+                        items: _banners.map { .init(banner: $0) }
+                    )
+                }
+                if let _goods = data.contents.goods {
+                    return .init(
+                        contentType: data.contents.type,
+                        items: _goods.map { .init(goods: $0) }
+                    )
+                }
+                if let _styles = data.contents.styles {
+                    return .init(
+                        contentType: data.contents.type,
+                        items: _styles.map { .init(style: $0) }
+                    )
+                }
+                return .init(
+                    contentType: data.contents.type,
+                    items: []
+                )
+            }
+            newState.sections = sections
+
         }
         return newState
     }
