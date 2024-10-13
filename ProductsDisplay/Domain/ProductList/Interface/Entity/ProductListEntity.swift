@@ -6,15 +6,56 @@
 //
 
 import Foundation
+import UIKit
 
-struct ProductListEntity {
+enum ContentType: String {
+    case banner = "BANNER"
+    case grid = "GRID"
+    case scroll = "SCROLL"
+    case style = "STYLE"
+
+    var columnCount: Int {
+        switch self {
+        case .banner:
+            return 1
+        default:
+            return 2
+        }
+    }
+
+    func orthogonalScrollingBehavior() -> UICollectionLayoutSectionOrthogonalScrollingBehavior {
+        switch self {
+        case .banner:
+            return .groupPagingCentered
+        default:
+            return .none
+        }
+    }
+}
+
+enum FooterType: String {
+    case refresh = "REFRESH"
+    case more = "MORE"
+}
+
+enum HeaderType {
+    case normal
+    case all
+    case icon
+}
+
+struct ProductListEntity: Equatable {
     let data: [Datum]
 
     init(data: [Datum]) {
         self.data = data
     }
 
-    struct Datum {
+    struct Datum: Equatable {
+        static func == (lhs: ProductListEntity.Datum, rhs: ProductListEntity.Datum) -> Bool {
+            return lhs.contents == rhs.contents && lhs.header == rhs.header && lhs.footer == rhs.footer
+        }
+        
         let contents: Contents
         let header: Header?
         let footer: Footer?
@@ -26,21 +67,21 @@ struct ProductListEntity {
         }
     }
 
-    struct Contents {
-        let type: String
-        let banners: [Banner]?
-        let goods: [Goods]?
-        let styles: [Style]?
+    struct Contents: Equatable {
+        let type: ContentType
+        var banners: [Banner]?
+        var goods: [Goods]?
+        var styles: [Style]?
 
         init(type: String, banners: [Banner]?, goods: [Goods]?, styles: [Style]?) {
-            self.type = type
+            self.type = ContentType(rawValue: type)!
             self.banners = banners
             self.goods = goods
             self.styles = styles
         }
     }
 
-    struct Banner {
+    struct Banner: Hashable {
         let linkURL: String
         let thumbnailURL: String
         let title, description, keyword: String
@@ -54,7 +95,7 @@ struct ProductListEntity {
         }
     }
 
-    struct Goods {
+    struct Goods: Hashable {
         let linkURL: String
         let thumbnailURL: String
         let brandName: String
@@ -71,7 +112,7 @@ struct ProductListEntity {
         }
     }
 
-    struct Style {
+    struct Style: Hashable {
         let linkURL: String
         let thumbnailURL: String
 
@@ -81,18 +122,20 @@ struct ProductListEntity {
         }
     }
 
-    struct Footer {
-        let type, title: String
+    struct Footer: Equatable {
+        let type: FooterType
+        let title: String
         let iconURL: String?
 
         init(type: String, title: String, iconURL: String?) {
-            self.type = type
+            self.type = FooterType(rawValue: type)!
             self.title = title
             self.iconURL = iconURL
         }
     }
 
-    struct Header {
+    struct Header: Equatable {
+        let type: HeaderType
         let title: String
         let iconURL: String?
         let linkURL: String?
@@ -101,6 +144,16 @@ struct ProductListEntity {
             self.title = title
             self.iconURL = iconURL
             self.linkURL = linkURL
+
+            var type: HeaderType
+            if linkURL != nil {
+                type = .all
+            } else if iconURL != nil {
+                type = .icon
+            } else {
+                type = .normal
+            }
+            self.type = type
         }
     }
 }

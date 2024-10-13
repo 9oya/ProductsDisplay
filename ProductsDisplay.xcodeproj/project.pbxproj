@@ -56,6 +56,12 @@
 		BF772EDB2CBA59FA00187EA8 /* LoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EDA2CBA59FA00187EA8 /* LoggerPlugin.swift */; };
 		BF772EDD2CBA5A7800187EA8 /* ProductListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EDC2CBA5A7800187EA8 /* ProductListAPI.swift */; };
 		BF772EE42CBA61E000187EA8 /* Extension+ViewController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */; };
+		BF772EE72CBB79E100187EA8 /* BannerCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EE62CBB79E100187EA8 /* BannerCollectionCell.swift */; };
+		BF772EE92CBB7AE500187EA8 /* FooterCollectionResusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EE82CBB7AE500187EA8 /* FooterCollectionResusableView.swift */; };
+		BF772EEB2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EEA2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift */; };
+		BF772EEE2CBB801600187EA8 /* SectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EED2CBB801600187EA8 /* SectionModel.swift */; };
+		BF772EF12CBB919600187EA8 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF02CBB919600187EA8 /* UIHelper.swift */; };
+		BF772EF32CBB992000187EA8 /* ViewComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF22CBB992000187EA8 /* ViewComponent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +116,12 @@
 		BF772EDA2CBA59FA00187EA8 /* LoggerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerPlugin.swift; sourceTree = "<group>"; };
 		BF772EDC2CBA5A7800187EA8 /* ProductListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductListAPI.swift; sourceTree = "<group>"; };
 		BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+ViewController+Rx.swift"; sourceTree = "<group>"; };
+		BF772EE62CBB79E100187EA8 /* BannerCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerCollectionCell.swift; sourceTree = "<group>"; };
+		BF772EE82CBB7AE500187EA8 /* FooterCollectionResusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterCollectionResusableView.swift; sourceTree = "<group>"; };
+		BF772EEA2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionResusableView.swift; sourceTree = "<group>"; };
+		BF772EED2CBB801600187EA8 /* SectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionModel.swift; sourceTree = "<group>"; };
+		BF772EF02CBB919600187EA8 /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
+		BF772EF22CBB992000187EA8 /* ViewComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -503,6 +515,8 @@
 		BF772ECF2CBA4E4B00187EA8 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
+				BF772EEC2CBB800000187EA8 /* SectionModel */,
+				BF772EE52CBB79C700187EA8 /* Cells */,
 				BF772ED02CBA4E5600187EA8 /* HomeViewController.swift */,
 				BF772ED22CBA4E6000187EA8 /* HomeReactor.swift */,
 			);
@@ -512,6 +526,7 @@
 		BF772EDE2CBA61A200187EA8 /* DesignSystem */ = {
 			isa = PBXGroup;
 			children = (
+				BF772EF22CBB992000187EA8 /* ViewComponent.swift */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -527,6 +542,7 @@
 		BF772EE12CBA61CB00187EA8 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BF772EEF2CBB918D00187EA8 /* Utilities */,
 				BF772EE22CBA61D000187EA8 /* Extensions */,
 			);
 			path = Sources;
@@ -538,6 +554,32 @@
 				BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		BF772EE52CBB79C700187EA8 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				BF772EE62CBB79E100187EA8 /* BannerCollectionCell.swift */,
+				BF772EE82CBB7AE500187EA8 /* FooterCollectionResusableView.swift */,
+				BF772EEA2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		BF772EEC2CBB800000187EA8 /* SectionModel */ = {
+			isa = PBXGroup;
+			children = (
+				BF772EED2CBB801600187EA8 /* SectionModel.swift */,
+			);
+			path = SectionModel;
+			sourceTree = "<group>";
+		};
+		BF772EEF2CBB918D00187EA8 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				BF772EF02CBB919600187EA8 /* UIHelper.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -713,6 +755,7 @@
 				BF772EAE2CBA4BA200187EA8 /* ProductListRepository.swift in Sources */,
 				BF772ED92CBA52AB00187EA8 /* HomeImpl.swift in Sources */,
 				BF772E932CBA488400187EA8 /* NetworkManager.swift in Sources */,
+				BF772EF32CBB992000187EA8 /* ViewComponent.swift in Sources */,
 				BF772EC52CBA4DF700187EA8 /* Home.swift in Sources */,
 				BF772EB22CBA4BB700187EA8 /* Extension+Container+ProductListDomain.swift in Sources */,
 				BF772E912CBA487900187EA8 /* MoyaNetworkManager.swift in Sources */,
@@ -724,8 +767,13 @@
 				BF772EB02CBA4BAB00187EA8 /* ProductListEntity.swift in Sources */,
 				BF772ED32CBA4E6000187EA8 /* HomeReactor.swift in Sources */,
 				BF772EDB2CBA59FA00187EA8 /* LoggerPlugin.swift in Sources */,
+				BF772EEE2CBB801600187EA8 /* SectionModel.swift in Sources */,
 				BF772EB82CBA4BE400187EA8 /* ProductListDTO.swift in Sources */,
+				BF772EEB2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift in Sources */,
 				BF772E952CBA48A200187EA8 /* Extension+Container+Networking.swift in Sources */,
+				BF772EF12CBB919600187EA8 /* UIHelper.swift in Sources */,
+				BF772EE92CBB7AE500187EA8 /* FooterCollectionResusableView.swift in Sources */,
+				BF772EE72CBB79E100187EA8 /* BannerCollectionCell.swift in Sources */,
 				BF772EB62CBA4BD500187EA8 /* RemoteProductListDataSourceImpl.swift in Sources */,
 				BF772EDD2CBA5A7800187EA8 /* ProductListAPI.swift in Sources */,
 				BF772EBA2CBA4BF700187EA8 /* Extension+Container+ProudctListData.swift in Sources */,

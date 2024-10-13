@@ -16,6 +16,7 @@ class HomeReactor: Reactor, Stepper {
 
     var initialState: State
     var steps: PublishRelay<Step> = PublishRelay<Step>()
+
     private let productListUseCase: ProductListUseCase
 
     init(productListUseCase: ProductListUseCase) {
@@ -25,6 +26,7 @@ class HomeReactor: Reactor, Stepper {
 
     struct State {
         var products: ProductListEntity?
+        var items: [Item]?
     }
 
     enum Action {
