@@ -62,27 +62,43 @@ class HomeReactor: Reactor, Stepper {
         case .setProducts(let entity):
             let sections: [SectionModel] = entity.data.map { data in
                 let contentType = data.contents.type
+                var footer: SectionModel.Footer?
+                if let _footer = data.footer {
+                    footer = .init(type: _footer.type, title: _footer.title, iconURL: _footer.iconURL)
+                }
+                var header: SectionModel.Header?
+                if let _header = data.header {
+                    header = .init(title: _header.title, iconURL: _header.iconURL, linkURL: _header.linkURL)
+                }
                 if let _banners = data.contents.banners {
                     return .init(
                         contentType: contentType,
-                        items: _banners.map { .init(banner: $0) }
+                        items: _banners.map { .init(banner: $0) },
+                        footer: footer,
+                        header: header
                     )
                 }
                 if let _goods = data.contents.goods {
                     return .init(
                         contentType: contentType,
-                        items: _goods.map { .init(goods: $0) }
+                        items: _goods.map { .init(goods: $0) },
+                        footer: footer,
+                        header: header
                     )
                 }
                 if let _styles = data.contents.styles {
                     return .init(
                         contentType: contentType,
-                        items: _styles.map { .init(style: $0) }
+                        items: _styles.map { .init(style: $0) },
+                        footer: footer,
+                        header: header
                     )
                 }
                 return .init(
                     contentType: contentType,
-                    items: []
+                    items: [],
+                    footer: nil,
+                    header: nil
                 )
             }
             newState.sections = sections

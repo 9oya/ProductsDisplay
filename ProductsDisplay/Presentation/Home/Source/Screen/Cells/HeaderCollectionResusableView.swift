@@ -7,8 +7,13 @@
 
 import UIKit
 
+import Then
+import SnapKit
+
 class HeaderCollectionResusableView: UICollectionReusableView {
-    var label: UILabel!
+    var titleLabel: UILabel!
+    var iconImageView: UIImageView!
+    var button: UIButton!
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -17,18 +22,58 @@ class HeaderCollectionResusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        label = UILabel().then {
-            $0.text = "Header"
-            $0.textAlignment = .center
-            $0.textColor = .black
+        titleLabel = UILabel().then {
+            $0.textAlignment = .left
+            $0.textColor = .label
+            $0.numberOfLines = 0
         }
-        addSubview(label)
-        label.snp.makeConstraints {
+        iconImageView = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
+            $0.backgroundColor = .green
+        }
+        button = UIButton().then {
+            $0.setTitle(
+                text: "전체",
+                font: .systemFont(ofSize: 12, weight: .light),
+                color: .systemGray4
+            )
+            $0.backgroundColor = .blue
+            $0.isHidden = true
+        }
+
+        addSubview(titleLabel)
+        addSubview(iconImageView)
+        addSubview(button)
+
+        titleLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
+            $0.left.equalToSuperview().inset(15)
+            $0.right.equalTo(button.snp.left).offset(-30)
+        }
+        iconImageView.snp.makeConstraints {
+            $0.left.equalTo(titleLabel.snp.right)
+            $0.centerY.equalTo(titleLabel)
+            $0.width.height.equalTo(20)
+        }
+        button.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().inset(15)
+            $0.width.height.equalTo(60)
         }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        titleLabel.text = nil
+        iconImageView.image = nil
+        button.isHidden = true
+    }
+
+    func apply(title: String, iconURL: String?, linkURL: String?) {
+        titleLabel.text = title
+        if let iconURL = iconURL, let imgURL = URL(string: iconURL) {
+            UIHelper.loadImage(imageURL: imgURL, imageView: iconImageView)
+        }
+        button.isHidden = linkURL == nil
     }
 }

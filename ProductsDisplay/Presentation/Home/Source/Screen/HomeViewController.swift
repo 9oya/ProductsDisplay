@@ -149,8 +149,21 @@ extension HomeViewController {
     }
 
     func configureSupplementaryViewRegistrationAndDataSource() {
-        let headerRegistration = HeaderRegistration(elementKind: String(describing: HeaderCollectionResusableView.self)) { supplementaryView, elementKind, indexPath in
-            supplementaryView.backgroundColor = .red
+        let headerRegistration = HeaderRegistration(elementKind: String(describing: HeaderCollectionResusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self = self,
+                  let reactor = self.reactor else {
+                return
+            }
+            let state = reactor.currentState
+            let section = state.sections[indexPath.section]
+
+            if let header = section.header {
+                supplementaryView.apply(
+                    title: header.title,
+                    iconURL: header.iconURL,
+                    linkURL: header.linkURL
+                )
+            }
         }
         let footerRegistration = FooterRegistration(elementKind: String(describing: FooterCollectionResusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
             guard let self = self,
@@ -160,8 +173,8 @@ extension HomeViewController {
             let state = reactor.currentState
 
             supplementaryView.backgroundColor = .white
-            let content = self.reactor?.currentState.products?.data[indexPath.section]
-            guard let footerType: FooterType = content?.footer?.type else {
+            let section = state.sections[indexPath.section]
+            guard let footerType: FooterType = section.footer?.type else {
                 return
             }
             supplementaryView.apply(footerType: footerType)
@@ -210,25 +223,22 @@ extension HomeViewController {
                 return nil
             }
 
-            let content = state.products?.data[sectionIndex]
-            let contentType: ContentType = content?.contents.type ?? .banner
-            let headerType: HeaderType? = content?.header?.type
-            let footerType: FooterType? = content?.footer?.type
+            let sectionModel = state.sections[sectionIndex]
 
-            var section: NSCollectionLayoutSection
-            switch contentType {
+            var layoutSection: NSCollectionLayoutSection
+            switch sectionModel.kind {
             case .banner:
-                section = self.getBannerLayout()
+                layoutSection = self.getBannerLayout()
             case .grid:
-                section = self.getGridLayout()
+                layoutSection = self.getGridLayout()
             case .scroll:
-                section = self.getScrollLayout()
+                layoutSection = self.getScrollLayout()
             case .style:
-                section = self.getStyleLayout()
+                layoutSection = self.getStyleLayout()
             }
 
             var boundarySupplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem] = []
-            if let _ = headerType {
+            if sectionModel.header != nil {
                 let headerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
                 let header: NSCollectionLayoutBoundarySupplementaryItem = .init(
                     layoutSize: headerSize,
@@ -237,8 +247,8 @@ extension HomeViewController {
                 )
                 boundarySupplementaryItems.append(header)
             }
-            if let _ = footerType,
-                state.sections[sectionIndex].items.count > state.currentPages[sectionIndex] * state.sections[sectionIndex].kind.itemsPerPage {
+            if sectionModel.footer != nil,
+               sectionModel.items.count > state.currentPages[sectionIndex] * sectionModel.kind.itemsPerPage {
 
                 let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
                 let footer = NSCollectionLayoutBoundarySupplementaryItem(
@@ -248,9 +258,9 @@ extension HomeViewController {
                 )
                 boundarySupplementaryItems.append(footer)
             }
-            section.boundarySupplementaryItems = boundarySupplementaryItems
+            layoutSection.boundarySupplementaryItems = boundarySupplementaryItems
 
-            return section
+            return layoutSection
         }
     }
 
