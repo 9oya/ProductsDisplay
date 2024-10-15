@@ -14,12 +14,14 @@ enum SectionKind: String {
     case scroll = "SCROLL"
     case style = "STYLE"
 
-    var columnCount: Int {
+    var itemsPerPage: Int {
         switch self {
-        case .banner:
-            return 1
-        default:
-            return 2
+        case .banner, .scroll:
+            return 0
+        case .grid:
+            return 6
+        case .style:
+            return 6
         }
     }
 
@@ -48,7 +50,7 @@ enum SectionKind: String {
 
 struct SectionModel: Hashable {
     let kind: SectionKind
-    var items: [Item]
+    let items: [Item]
 
     init(contentType: ContentType, items: [Item]) {
         self.kind = SectionKind(contentType: contentType)

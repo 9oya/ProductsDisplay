@@ -44,10 +44,36 @@ class HomeViewController: UIViewController, View {
 
     func bindState(_ reactor: HomeReactor) {
         reactor.state
-            .compactMap { $0.sections }
+            .map { $0.sections }
+            .filter { $0.count > 0 }
             .distinctUntilChanged()
             .bind(with: self, onNext: { owner, sections in
                 owner.configureInitialSnapshot(sections: sections)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.currentPages }
+            .filter { $0.count > 0 }
+            .distinctUntilChanged()
+            .bind(with: self, onNext: { owner, currentPage in
+                for (sectionIndex, currentPage) in currentPage.enumerated() {
+                    let prevPage = reactor.currentState.prevPages[sectionIndex]
+                    guard prevPage < currentPage else {
+                        continue
+                    }
+                    let section = reactor.currentState.sections[sectionIndex]
+                    var endItemCnt = section.kind.itemsPerPage * currentPage
+
+                    if endItemCnt > section.items.count {
+                        endItemCnt = section.items.count
+                    }
+
+                    let startItemIdx = prevPage * section.kind.itemsPerPage
+                    let items = Array(section.items[startItemIdx..<endItemCnt])
+                    owner.snapshot.appendItems(items, toSection: section.kind)
+                    owner.diffableDataSource.apply(owner.snapshot, animatingDifferences: true)
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -111,8 +137,28 @@ extension HomeViewController {
         let headerRegistration = HeaderRegistration(elementKind: String(describing: HeaderCollectionResusableView.self)) { supplementaryView, elementKind, indexPath in
             supplementaryView.backgroundColor = .red
         }
-        let footerRegistration = FooterRegistration(elementKind: String(describing: FooterCollectionResusableView.self)) { supplementaryView, elementKind, indexPath in
-            supplementaryView.backgroundColor = .blue
+        let footerRegistration = FooterRegistration(elementKind: String(describing: FooterCollectionResusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self = self,
+                  let reactor = self.reactor else {
+                return
+            }
+            let state = reactor.currentState
+
+            supplementaryView.backgroundColor = .white
+            let content = self.reactor?.currentState.products?.data[indexPath.section]
+            guard let footerType: FooterType = content?.footer?.type else {
+                return
+            }
+            supplementaryView.apply(footerType: footerType)
+
+            supplementaryView.button.rx.tap
+                .filter {
+                    state.sections[indexPath.section].items.count > state.currentPages[indexPath.section] * state.sections[indexPath.section].kind.itemsPerPage
+                }
+                .observe(on: MainScheduler.asyncInstance)
+                .map { Reactor.Action.moreButtonDidTap(sectionIndex: indexPath.section) }
+                .bind(to: reactor.action)
+                .disposed(by: supplementaryView.disposeBag)
         }
         diffableDataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
             switch elementKind {
@@ -137,7 +183,13 @@ extension HomeViewController {
 
         for section in sections {
             snapshot.appendSections([section.kind])
-            snapshot.appendItems(section.items)
+            var endItemIdx = section.kind.itemsPerPage
+            if endItemIdx == 0 {
+                endItemIdx = section.items.count
+            }
+            endItemIdx -= 1
+            let items = Array(section.items[0...endItemIdx])
+            snapshot.appendItems(items)
         }
 
         diffableDataSource.apply(snapshot, animatingDifferences: true)
