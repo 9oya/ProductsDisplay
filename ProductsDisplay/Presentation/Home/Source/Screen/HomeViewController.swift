@@ -177,7 +177,10 @@ extension HomeViewController {
             guard let footerType: FooterType = section.footer?.type else {
                 return
             }
-            supplementaryView.apply(footerType: footerType)
+            supplementaryView.apply(
+                footerType: footerType,
+                iconURL: section.footer?.iconURL
+            )
 
             switch footerType {
             case .more:
@@ -370,7 +373,7 @@ extension HomeViewController {
     }
 
     func setupUI() {
-        view.backgroundColor = .yellow
+        view.backgroundColor = .systemBackground
 
         configureCollectionView()
     }

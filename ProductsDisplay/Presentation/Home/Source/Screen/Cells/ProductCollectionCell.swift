@@ -22,7 +22,6 @@ class ProductCollectionCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .green
 
         imageView = UIImageView().then {
             $0.contentMode = .scaleAspectFill

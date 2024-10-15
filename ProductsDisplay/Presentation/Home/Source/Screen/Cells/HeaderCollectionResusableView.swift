@@ -11,6 +11,7 @@ import Then
 import SnapKit
 
 class HeaderCollectionResusableView: UICollectionReusableView {
+    var hStackView: UIStackView!
     var titleLabel: UILabel!
     var iconImageView: UIImageView!
     var button: UIButton!
@@ -21,37 +22,45 @@ class HeaderCollectionResusableView: UICollectionReusableView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        hStackView = UIStackView().then {
+            $0.axis = .horizontal
+            $0.spacing = 10
+            $0.alignment = .center
+        }
 
         titleLabel = UILabel().then {
             $0.textAlignment = .left
             $0.textColor = .label
+            $0.font = .systemFont(ofSize: 20, weight: .bold)
             $0.numberOfLines = 0
         }
         iconImageView = UIImageView().then {
             $0.contentMode = .scaleAspectFit
-            $0.backgroundColor = .green
         }
         button = UIButton().then {
             $0.setTitle(
                 text: "전체",
-                font: .systemFont(ofSize: 12, weight: .light),
-                color: .systemGray4
+                font: .systemFont(ofSize: 15, weight: .light),
+                color: .systemGray3
             )
-            $0.backgroundColor = .blue
             $0.isHidden = true
         }
 
-        addSubview(titleLabel)
-        addSubview(iconImageView)
+        addSubview(hStackView)
+        hStackView.addArrangedSubview(titleLabel)
+        hStackView.addArrangedSubview(iconImageView)
+        hStackView.addHorizontalSpacer()
         addSubview(button)
 
-        titleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        hStackView.snp.makeConstraints {
             $0.left.equalToSuperview().inset(15)
+            $0.centerY.equalToSuperview()
             $0.right.equalTo(button.snp.left).offset(-30)
         }
+        titleLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+        }
         iconImageView.snp.makeConstraints {
-            $0.left.equalTo(titleLabel.snp.right)
             $0.centerY.equalTo(titleLabel)
             $0.width.height.equalTo(20)
         }
@@ -75,5 +84,37 @@ class HeaderCollectionResusableView: UICollectionReusableView {
             UIHelper.loadImage(imageURL: imgURL, imageView: iconImageView)
         }
         button.isHidden = linkURL == nil
+    }
+}
+
+
+extension UIStackView {
+
+    func addHorizontalSpacer(_ width: CGFloat? = nil) {
+        let spacer = UIView()
+        addArrangedSubview(spacer)
+        if let width = width {
+            spacer.snp.makeConstraints {
+                $0.width.equalTo(width)
+            }
+        } else {
+            spacer.isUserInteractionEnabled = false
+            spacer.setContentHuggingPriority(.fittingSizeLevel, for: .horizontal)
+            spacer.setContentCompressionResistancePriority(.fittingSizeLevel, for: .horizontal)
+        }
+    }
+
+    func addVerticalSpacer(_ height: CGFloat? = nil) {
+        let spacer = UIView()
+        addArrangedSubview(spacer)
+        if let height = height {
+            spacer.snp.makeConstraints {
+                $0.height.equalTo(height)
+            }
+        } else {
+            spacer.isUserInteractionEnabled = false
+            spacer.setContentHuggingPriority(.fittingSizeLevel, for: .vertical)
+            spacer.setContentCompressionResistancePriority(.fittingSizeLevel, for: .vertical)
+        }
     }
 }

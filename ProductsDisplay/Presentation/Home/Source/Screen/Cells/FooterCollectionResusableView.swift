@@ -40,17 +40,20 @@ class FooterCollectionResusableView: UICollectionReusableView {
         disposeBag = DisposeBag()
     }
 
-    func apply(footerType: FooterType) {
+    func apply(footerType: FooterType, iconURL: String?) {
         var title = ""
         switch footerType {
         case .more:
             title = "더보기"
         case .refresh:
             title = "새로운 추천"
-            let config = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 15))
-            let image = UIImage(systemName: "arrow.clockwise", withConfiguration: config)
-            button.setImage(image: image, padding: 5)
-            button.tintColor = .systemGray
+//            let config = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 15))
+//            let image = UIImage(systemName: "arrow.clockwise", withConfiguration: config)
+//            button.setImage(image: image, padding: 5)
+//            button.tintColor = .systemGray
+        }
+        if let iconURL = iconURL, let imgURL = URL(string: iconURL) {
+            UIHelper.loadImage(imageURL: imgURL, imageView: button)
         }
         button.setTitle(
             text: title,
