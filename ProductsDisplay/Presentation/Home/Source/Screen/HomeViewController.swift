@@ -196,8 +196,13 @@ extension HomeViewController {
     }
 
     func getLayout() -> UICollectionViewLayout {
-        return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            let content = self.reactor?.currentState.products?.data[sectionIndex]
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ -> NSCollectionLayoutSection? in
+            guard let self = self,
+                  let state = self.reactor?.currentState else {
+                return nil
+            }
+
+            let content = state.products?.data[sectionIndex]
             let contentType: ContentType = content?.contents.type ?? .banner
             let headerType: HeaderType? = content?.header?.type
             let footerType: FooterType? = content?.footer?.type
@@ -224,7 +229,9 @@ extension HomeViewController {
                 )
                 boundarySupplementaryItems.append(header)
             }
-            if let _ = footerType {
+            if let _ = footerType,
+                state.sections[sectionIndex].items.count > state.currentPages[sectionIndex] * state.sections[sectionIndex].kind.itemsPerPage {
+
                 let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
                 let footer = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: footerSize,
