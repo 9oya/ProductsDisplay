@@ -48,7 +48,22 @@ class HomeViewController: UIViewController, View {
             .filter { $0.count > 0 }
             .distinctUntilChanged()
             .bind(with: self, onNext: { owner, sections in
-                owner.configureInitialSnapshot(sections: sections)
+                let state = reactor.currentState
+
+                owner.snapshot = NSDiffableDataSourceSnapshot<SectionKind, Item>()
+
+                for (index, section) in sections.enumerated() {
+                    owner.snapshot.appendSections([section.kind])
+
+                    var endItemCnt = state.currentPages[index] * section.kind.itemsPerPage
+                    if endItemCnt == 0 || endItemCnt > section.items.count {
+                        endItemCnt = section.items.count
+                    }
+                    let items = Array(section.items[0..<endItemCnt])
+                    owner.snapshot.appendItems(items)
+                }
+
+                owner.diffableDataSource.apply(owner.snapshot, animatingDifferences: true)
             })
             .disposed(by: disposeBag)
 
@@ -151,14 +166,24 @@ extension HomeViewController {
             }
             supplementaryView.apply(footerType: footerType)
 
-            supplementaryView.button.rx.tap
-                .filter {
-                    state.sections[indexPath.section].items.count > state.currentPages[indexPath.section] * state.sections[indexPath.section].kind.itemsPerPage
-                }
-                .observe(on: MainScheduler.asyncInstance)
-                .map { Reactor.Action.moreButtonDidTap(sectionIndex: indexPath.section) }
-                .bind(to: reactor.action)
-                .disposed(by: supplementaryView.disposeBag)
+            switch footerType {
+            case .more:
+                supplementaryView.button.rx.tap
+                    .filter {
+                        state.sections[indexPath.section].items.count > state.currentPages[indexPath.section] * state.sections[indexPath.section].kind.itemsPerPage
+                    }
+                    .observe(on: MainScheduler.asyncInstance)
+                    .map { Reactor.Action.moreButtonDidTap(sectionIndex: indexPath.section) }
+                    .bind(to: reactor.action)
+                    .disposed(by: supplementaryView.disposeBag)
+            case .refresh:
+                supplementaryView.button.rx.tap
+                    .observe(on: MainScheduler.asyncInstance)
+                    .map { Reactor.Action.refreshButtonDidTap(sectionIndex: indexPath.section) }
+                    .bind(to: reactor.action)
+                    .disposed(by: supplementaryView.disposeBag)
+            }
+
         }
         diffableDataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
             switch elementKind {
@@ -178,23 +203,6 @@ extension HomeViewController {
         }
     }
 
-    func configureInitialSnapshot(sections: [SectionModel]) {
-        snapshot = NSDiffableDataSourceSnapshot<SectionKind, Item>()
-
-        for section in sections {
-            snapshot.appendSections([section.kind])
-            var endItemIdx = section.kind.itemsPerPage
-            if endItemIdx == 0 {
-                endItemIdx = section.items.count
-            }
-            endItemIdx -= 1
-            let items = Array(section.items[0...endItemIdx])
-            snapshot.appendItems(items)
-        }
-
-        diffableDataSource.apply(snapshot, animatingDifferences: true)
-    }
-
     func getLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ -> NSCollectionLayoutSection? in
             guard let self = self,
@@ -210,13 +218,13 @@ extension HomeViewController {
             var section: NSCollectionLayoutSection
             switch contentType {
             case .banner:
-                section = self.getBannerLayout(headerType: headerType, footerType: footerType)
+                section = self.getBannerLayout()
             case .grid:
-                section = self.getGridLayout(headerType: headerType, footerType: footerType)
+                section = self.getGridLayout()
             case .scroll:
-                section = self.getScrollLayout(headerType: headerType, footerType: footerType)
+                section = self.getScrollLayout()
             case .style:
-                section = self.getStyleLayout(headerType: headerType, footerType: footerType)
+                section = self.getStyleLayout()
             }
 
             var boundarySupplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem] = []
@@ -246,10 +254,7 @@ extension HomeViewController {
         }
     }
 
-    func getBannerLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getBannerLayout() -> NSCollectionLayoutSection {
         let item: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalHeight(1)
@@ -267,10 +272,7 @@ extension HomeViewController {
         return section
     }
 
-    func getGridLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getGridLayout() -> NSCollectionLayoutSection {
         let item: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
@@ -288,10 +290,7 @@ extension HomeViewController {
         return section
     }
 
-    func getScrollLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getScrollLayout() -> NSCollectionLayoutSection {
         let item: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(0.3),
             heightDimension: .fractionalHeight(1)
@@ -310,10 +309,7 @@ extension HomeViewController {
         return section
     }
 
-    func getStyleLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getStyleLayout() -> NSCollectionLayoutSection {
         let itemA: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalHeight(1/2)
@@ -377,7 +373,6 @@ extension HomeViewController {
             $0.isScrollEnabled = true
             $0.showsHorizontalScrollIndicator = false
             $0.showsVerticalScrollIndicator = true
-//            $0.scrollIndicatorInsets = UIEdgeInsets(top: -2, left: 0, bottom: 0, right: 4)
             $0.contentInset = .zero
             $0.backgroundColor = .clear
             $0.clipsToBounds = true

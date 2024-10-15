@@ -17,20 +17,12 @@ enum SectionKind: String {
     var itemsPerPage: Int {
         switch self {
         case .banner, .scroll:
+            // 페이징 없음
             return 0
         case .grid:
             return 6
         case .style:
             return 6
-        }
-    }
-
-    func orthogonalScrollingBehavior() -> UICollectionLayoutSectionOrthogonalScrollingBehavior {
-        switch self {
-        case .banner:
-            return .groupPagingCentered
-        default:
-            return .none
         }
     }
 
@@ -50,7 +42,7 @@ enum SectionKind: String {
 
 struct SectionModel: Hashable {
     let kind: SectionKind
-    let items: [Item]
+    var items: [Item]
 
     init(contentType: ContentType, items: [Item]) {
         self.kind = SectionKind(contentType: contentType)

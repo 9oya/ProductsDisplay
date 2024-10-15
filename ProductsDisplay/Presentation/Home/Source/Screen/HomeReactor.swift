@@ -25,7 +25,6 @@ class HomeReactor: Reactor, Stepper {
     }
 
     struct State {
-        var products: ProductListEntity?
         var sections: [SectionModel] = []
         var prevPages: [Int] = []
         var currentPages: [Int] = []
@@ -34,11 +33,13 @@ class HomeReactor: Reactor, Stepper {
     enum Action {
         case viewDidLoad
         case moreButtonDidTap(sectionIndex: Int)
+        case refreshButtonDidTap(sectionIndex: Int)
     }
 
     enum Mutation {
         case setProducts(ProductListEntity)
         case setPage(sectionIndex: Int)
+        case setItems(sectionIndex: Int)
     }
 
     func mutate(action: Action) -> Observable<Mutation> {
@@ -50,6 +51,8 @@ class HomeReactor: Reactor, Stepper {
                 .map { .setProducts($0) }
         case .moreButtonDidTap(let sectionIndex):
             return .just(.setPage(sectionIndex: sectionIndex))
+        case .refreshButtonDidTap(let sectionIndex):
+            return .just(.setItems(sectionIndex: sectionIndex))
         }
     }
 
@@ -57,8 +60,6 @@ class HomeReactor: Reactor, Stepper {
         var newState = state
         switch mutation {
         case .setProducts(let entity):
-            newState.products = entity
-
             let sections: [SectionModel] = entity.data.map { data in
                 let contentType = data.contents.type
                 if let _banners = data.contents.banners {
@@ -90,6 +91,8 @@ class HomeReactor: Reactor, Stepper {
         case .setPage(let sectionIndex):
             newState.prevPages = newState.currentPages
             newState.currentPages[sectionIndex] += 1
+        case .setItems(let sectionIndex):
+            newState.sections[sectionIndex].items = newState.sections[sectionIndex].items.shuffled()
         }
         return newState
     }
