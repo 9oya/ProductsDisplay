@@ -111,8 +111,13 @@ extension HomeViewController {
             guard let goods = item.goods else {
                 return
             }
-            let imageURL = goods.thumbnailURL
-            cell.apply(imageURL: imageURL)
+            cell.apply(
+                imageURL: goods.thumbnailURL,
+                brandName: goods.brandName,
+                price: goods.price,
+                saleRate: goods.saleRate,
+                hasCoupone: goods.hasCoupon
+            )
         }
         let styleCellRegistration = StyleCellRegistration { cell, _, item in
             guard let style = item.style else {
@@ -242,7 +247,7 @@ extension HomeViewController {
 
             var boundarySupplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem] = []
             if sectionModel.header != nil {
-                let headerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
+                let headerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80.0))
                 let header: NSCollectionLayoutBoundarySupplementaryItem = .init(
                     layoutSize: headerSize,
                     elementKind: String(describing: HeaderCollectionResusableView.self),
@@ -253,7 +258,7 @@ extension HomeViewController {
             if sectionModel.footer != nil,
                sectionModel.items.count > state.currentPages[sectionIndex] * sectionModel.kind.itemsPerPage {
 
-                let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
+                let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80.0))
                 let footer = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: footerSize,
                     elementKind: String(describing: FooterCollectionResusableView.self),
@@ -312,7 +317,7 @@ extension HomeViewController {
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .estimated(UIScreen.main.bounds.width),
-                heightDimension: .fractionalWidth(1/3)
+                heightDimension: .fractionalWidth(0.53)
             ),
             subitems: [item]
         )

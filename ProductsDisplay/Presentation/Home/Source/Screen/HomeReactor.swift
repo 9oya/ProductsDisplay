@@ -37,8 +37,8 @@ class HomeReactor: Reactor, Stepper {
     }
 
     enum Mutation {
-        case setProducts(ProductListEntity)
-        case setPage(sectionIndex: Int)
+        case setSections([SectionModel])
+        case setPages(sectionIndex: Int)
         case setItems(sectionIndex: Int)
     }
 
@@ -48,9 +48,10 @@ class HomeReactor: Reactor, Stepper {
             return productListUseCase
                 .fetchProducts()
                 .asObservable()
-                .map { .setProducts($0) }
+                .map(toSectionModels(from:))
+                .map { .setSections($0) }
         case .moreButtonDidTap(let sectionIndex):
-            return .just(.setPage(sectionIndex: sectionIndex))
+            return .just(.setPages(sectionIndex: sectionIndex))
         case .refreshButtonDidTap(let sectionIndex):
             return .just(.setItems(sectionIndex: sectionIndex))
         }
@@ -59,57 +60,64 @@ class HomeReactor: Reactor, Stepper {
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case .setProducts(let entity):
-            let sections: [SectionModel] = entity.data.map { data in
-                let contentType = data.contents.type
-                var footer: SectionModel.Footer?
-                if let _footer = data.footer {
-                    footer = .init(type: _footer.type, title: _footer.title, iconURL: _footer.iconURL)
-                }
-                var header: SectionModel.Header?
-                if let _header = data.header {
-                    header = .init(title: _header.title, iconURL: _header.iconURL, linkURL: _header.linkURL)
-                }
-                if let _banners = data.contents.banners {
-                    return .init(
-                        contentType: contentType,
-                        items: _banners.map { .init(banner: $0) },
-                        footer: footer,
-                        header: header
-                    )
-                }
-                if let _goods = data.contents.goods {
-                    return .init(
-                        contentType: contentType,
-                        items: _goods.map { .init(goods: $0) },
-                        footer: footer,
-                        header: header
-                    )
-                }
-                if let _styles = data.contents.styles {
-                    return .init(
-                        contentType: contentType,
-                        items: _styles.map { .init(style: $0) },
-                        footer: footer,
-                        header: header
-                    )
-                }
-                return .init(
-                    contentType: contentType,
-                    items: [],
-                    footer: nil,
-                    header: nil
-                )
-            }
+        case .setSections(let sections):
             newState.sections = sections
             newState.currentPages = sections.map { _ in 1 }
             newState.prevPages = newState.currentPages
-        case .setPage(let sectionIndex):
+        case .setPages(let sectionIndex):
             newState.prevPages = newState.currentPages
             newState.currentPages[sectionIndex] += 1
         case .setItems(let sectionIndex):
             newState.sections[sectionIndex].items = newState.sections[sectionIndex].items.shuffled()
         }
         return newState
+    }
+}
+
+extension HomeReactor {
+
+    func toSectionModels(from entity: ProductListEntity) -> [SectionModel] {
+        let sections: [SectionModel] = entity.data.map { data in
+            let contentType = data.contents.type
+            var footer: SectionModel.Footer?
+            if let _footer = data.footer {
+                footer = .init(type: _footer.type, title: _footer.title, iconURL: _footer.iconURL)
+            }
+            var header: SectionModel.Header?
+            if let _header = data.header {
+                header = .init(title: _header.title, iconURL: _header.iconURL, linkURL: _header.linkURL)
+            }
+            if let _banners = data.contents.banners {
+                return .init(
+                    contentType: contentType,
+                    items: _banners.map { .init(banner: $0) },
+                    footer: footer,
+                    header: header
+                )
+            }
+            if let _goods = data.contents.goods {
+                return .init(
+                    contentType: contentType,
+                    items: _goods.map { .init(goods: $0) },
+                    footer: footer,
+                    header: header
+                )
+            }
+            if let _styles = data.contents.styles {
+                return .init(
+                    contentType: contentType,
+                    items: _styles.map { .init(style: $0) },
+                    footer: footer,
+                    header: header
+                )
+            }
+            return .init(
+                contentType: contentType,
+                items: [],
+                footer: nil,
+                header: nil
+            )
+        }
+        return sections
     }
 }
