@@ -38,9 +38,8 @@ class ProductCollectionCell: UICollectionViewCell {
         hStackView = UIStackView().then {
             $0.axis = .horizontal
             $0.spacing = 0
-            $0.alignment = .leading
+            $0.alignment = .center
         }
-
         imageContainerView = UIView().then {
             $0.backgroundColor = .systemBackground
         }
@@ -49,30 +48,28 @@ class ProductCollectionCell: UICollectionViewCell {
             $0.clipsToBounds = true
         }
         couponLabelContainerView = UIView().then {
-            $0.backgroundColor = .purple.withAlphaComponent(0.7)
+            $0.backgroundColor = .systemIndigo.withAlphaComponent(0.9)
             $0.isHidden = true
         }
         couponLabel = UILabel().then {
             $0.textColor = .white
+            $0.font = .systemFont(ofSize: 11, weight: .regular)
             $0.text = "쿠폰"
         }
         brandLabel = UILabel().then {
             $0.textAlignment = .left
             $0.textColor = .gray
             $0.font = .systemFont(ofSize: 12)
-            $0.text = "한글안경"
         }
         priceLabel = UILabel().then {
             $0.textAlignment = .left
             $0.textColor = .label
             $0.font = .systemFont(ofSize: 16)
-            $0.text = "24,500원"
         }
         saleRateLabel = UILabel().then {
             $0.textAlignment = .left
             $0.textColor = .orange
             $0.font = .systemFont(ofSize: 12)
-            $0.text = "75"
         }
 
         contentView.addSubview(vStackView)
@@ -81,6 +78,7 @@ class ProductCollectionCell: UICollectionViewCell {
         imageContainerView.addSubview(productImageView)
         imageContainerView.addSubview(couponLabelContainerView)
         couponLabelContainerView.addSubview(couponLabel)
+        vStackView.addVerticalSpacer(5)
         vStackView.addArrangedSubview(brandLabel)
 
         hStackView.addArrangedSubview(priceLabel)
@@ -99,15 +97,18 @@ class ProductCollectionCell: UICollectionViewCell {
         productImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+
+        hStackView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+        }
         couponLabelContainerView.snp.makeConstraints {
-            $0.width.equalTo(30)
-            $0.height.equalTo(20)
+            $0.width.equalTo(35)
+            $0.height.equalTo(25)
             $0.left.bottom.equalToSuperview()
         }
         couponLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-
     }
 
     override func prepareForReuse() {

@@ -41,7 +41,8 @@ class HeaderCollectionResusableView: UICollectionReusableView {
             $0.setTitle(
                 text: "전체",
                 font: .systemFont(ofSize: 15, weight: .light),
-                color: .systemGray3
+                color: .systemGray,
+                titleAlignment: .trailing
             )
             $0.isHidden = true
         }
@@ -53,9 +54,9 @@ class HeaderCollectionResusableView: UICollectionReusableView {
         addSubview(button)
 
         hStackView.snp.makeConstraints {
-            $0.left.equalToSuperview().inset(15)
+            $0.left.equalToSuperview()
             $0.centerY.equalToSuperview()
-            $0.right.equalTo(button.snp.left).offset(-30)
+            $0.right.equalTo(button.snp.left)
         }
         titleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -66,7 +67,7 @@ class HeaderCollectionResusableView: UICollectionReusableView {
         }
         button.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.right.equalToSuperview().inset(15)
+            $0.right.equalToSuperview()
             $0.width.height.equalTo(60)
         }
     }

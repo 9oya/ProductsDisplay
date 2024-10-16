@@ -295,14 +295,16 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
         ))
+        item.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalWidth(0.53)
+                heightDimension: .fractionalWidth(0.6)
             ),
             subitems: [item, item, item]
         )
         let section: NSCollectionLayoutSection = .init(group: mainGroup)
+        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         section.orthogonalScrollingBehavior = .none
 
         return section
@@ -313,15 +315,16 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(0.3),
             heightDimension: .fractionalHeight(1)
         ))
-
+        item.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .estimated(UIScreen.main.bounds.width),
-                heightDimension: .fractionalWidth(0.53)
+                heightDimension: .fractionalWidth(0.6)
             ),
             subitems: [item]
         )
         let section = NSCollectionLayoutSection(group: mainGroup)
+        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         section.orthogonalScrollingBehavior = .continuous
 
         return section
@@ -333,6 +336,7 @@ extension HomeViewController {
             heightDimension: .fractionalHeight(1/2)
         ))
         itemA.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        itemA.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let vGroup: NSCollectionLayoutGroup = .vertical(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1/3),
@@ -345,6 +349,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(2/3),
             heightDimension: .fractionalHeight(1)
         ))
+        itemB.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let hGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
@@ -357,6 +362,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
         ))
+        itemC.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let hGroupB: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
@@ -373,7 +379,7 @@ extension HomeViewController {
         )
         let section = NSCollectionLayoutSection(group: mainVGroup)
         section.orthogonalScrollingBehavior = .none
-
+        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         return section
     }
 
