@@ -126,21 +126,30 @@ extension HomeViewController {
         guard self.automaticSlidingInterval > 0 && self.timer == nil else {
             return
         }
-        self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(self.automaticSlidingInterval),
-                                          target: self,
-                                          selector: #selector(self.flipNext(sender:)),
-                                          userInfo: nil,
-                                          repeats: true)
+        self.timer = Timer.scheduledTimer(
+            timeInterval: TimeInterval(self.automaticSlidingInterval),
+            target: self,
+            selector: #selector(self.flipNext(sender:)),
+            userInfo: nil,
+            repeats: true
+        )
         RunLoop.current.add(self.timer!, forMode: .common)
     }
 
     @objc
     private func flipNext(sender: Timer?) {
-        guard let state = reactor?.currentState,
-        let bannerCount = state.sections.filter({ $0.kind == .banner }).first?.items.count,
-            bannerCount > 1 else {
-                return
+        guard let state = reactor?.currentState else { return }
+        var bannerCount = 0
+        var sectionIndex = 0
+        for (index, section) in state.sections.enumerated() {
+            if section.kind == .banner {
+                bannerCount = section.items.count
+                sectionIndex = index
             }
+        }
+        guard bannerCount > 1 else {
+            return
+        }
         let currentPage = state.bannerPageIndex
         var nextPage = currentPage + 1
         var animated: Bool = true
@@ -148,7 +157,7 @@ extension HomeViewController {
             nextPage = nextPage % bannerCount
             animated = false
         }
-        collectionView.scrollToItem(at: IndexPath(item: nextPage, section: 0), at: .left, animated: animated)
+        collectionView.scrollToItem(at: IndexPath(item: nextPage, section: sectionIndex), at: .left, animated: animated)
     }
 
     private func cancelTimer() {
@@ -157,6 +166,11 @@ extension HomeViewController {
         }
         self.timer!.invalidate()
         self.timer = nil
+    }
+
+    private func restartTimer() {
+        self.cancelTimer()
+        self.startTimer()
     }
 }
 
@@ -432,14 +446,16 @@ extension HomeViewController {
         let section = NSCollectionLayoutSection(group: mainGroup)
         section.orthogonalScrollingBehavior = .groupPagingCentered
 
-        section.visibleItemsInvalidationHandler = { [weak reactor] visibleItems, contentOffset, environment in
-            guard let reactor = reactor else {
+        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, contentOffset, environment in
+            guard let self = self,
+                    let reactor = reactor else {
                 return
             }
             let bannerIndex = Int(max(0, round(contentOffset.x / environment.container.contentSize.width)))
             DispatchQueue.main.async {
                 reactor.action.onNext(.bannerPageIsChanged(index: bannerIndex))
             }
+            self.restartTimer()
         }
 
         return section
