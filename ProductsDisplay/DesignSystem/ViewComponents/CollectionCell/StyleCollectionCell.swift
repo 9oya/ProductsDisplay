@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 import Then
 
-class StyleCollectionCell: UICollectionViewCell {
+public class StyleCollectionCell: UICollectionViewCell {
 
-    var imageView: UIImageView!
+    public var imageView: UIImageView!
 
     required init?(coder: NSCoder) {
         fatalError()
@@ -31,12 +31,12 @@ class StyleCollectionCell: UICollectionViewCell {
         }
     }
 
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
     }
 
-    func apply(imageURL: String?) {
+    public func apply(imageURL: String?) {
         if let urlString = imageURL,
             let imageURL = URL(string: urlString) {
             UIHelper.loadImage(imageURL: imageURL, imageView: imageView)

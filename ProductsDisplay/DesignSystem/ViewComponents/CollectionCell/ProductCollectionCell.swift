@@ -10,18 +10,87 @@ import UIKit
 import SnapKit
 import Then
 
-class ProductCollectionCell: UICollectionViewCell {
+public class ProductCollectionCell: UICollectionViewCell {
 
-    var vStackView: UIStackView!
-    var imageContainerView: UIView!
-    var productImageView: UIImageView!
-    var couponLabelContainerView: UIView!
-    var couponLabel: UILabel!
+    public var vStackView: UIStackView!
+    public var imageContainerView: UIView!
+    public var productImageView: UIImageView!
+    public var couponLabelContainerView: UIView!
+    public var couponLabel: UILabel!
 
-    var hStackView: UIStackView!
-    var brandLabel: UILabel!
-    var priceLabel: UILabel!
-    var saleRateLabel: UILabel!
+    public var hStackView: UIStackView!
+    public var brandLabel: UILabel!
+    public var priceLabel: UILabel!
+    public var saleRateLabel: UILabel!
+
+    public var brandLabelConfig: PDLabelConfig = .init(
+        font: .systemFont(ofSize: 12, weight: .regular),
+        color: .gray,
+        textAlignment: .left
+    ) {
+        didSet {
+            brandLabel.font = brandLabelConfig.font
+            brandLabel.textColor = brandLabelConfig.color
+            brandLabel.textAlignment = brandLabelConfig.textAlignment
+        }
+    }
+
+    public var priceLabelConfig: PDLabelConfig = .init(
+        font: .systemFont(ofSize: 14, weight: .regular),
+        color: .label,
+        textAlignment: .left
+    ) {
+        didSet {
+            priceLabel.font = priceLabelConfig.font
+            priceLabel.textColor = priceLabelConfig.color
+            priceLabel.textAlignment = priceLabelConfig.textAlignment
+        }
+    }
+
+    public var saleRateLabelConfig: PDLabelConfig = .init(
+        font: .systemFont(ofSize: 12, weight: .medium),
+        color: .orange,
+        textAlignment: .left
+    ) {
+        didSet {
+            saleRateLabel.font = saleRateLabelConfig.font
+            saleRateLabel.textColor = saleRateLabelConfig.color
+            saleRateLabel.textAlignment = saleRateLabelConfig.textAlignment
+        }
+    }
+
+    public var couponLabelConfig: PDLabelConfig = .init(
+        font: .systemFont(ofSize: 11, weight: .regular),
+        color: .white,
+        textAlignment: .center
+    ) {
+        didSet {
+            couponLabel.font = couponLabelConfig.font
+            couponLabel.textColor = couponLabelConfig.color
+            couponLabel.textAlignment = couponLabelConfig.textAlignment
+        }
+    }
+
+    public var couponLabelName: String = "쿠폰" {
+        didSet {
+            couponLabel.text = couponLabelName
+        }
+    }
+
+    public var couponLabelBackgroundColor: UIColor = .systemIndigo.withAlphaComponent(0.9) {
+        didSet {
+            couponLabelContainerView.backgroundColor = couponLabelBackgroundColor
+        }
+    }
+
+    public var couponLabelSize: CGSize = .init(width: 35, height: 25) {
+        didSet {
+            couponLabelContainerView.snp.updateConstraints {
+                $0.width.equalTo(couponLabelSize.width)
+                $0.height.equalTo(couponLabelSize.height)
+            }
+        }
+    }
 
     required init?(coder: NSCoder) {
         fatalError()
@@ -32,7 +101,7 @@ class ProductCollectionCell: UICollectionViewCell {
 
         vStackView = UIStackView().then {
             $0.axis = .vertical
-            $0.spacing = 3
+            $0.spacing = 0
             $0.alignment = .leading
         }
         hStackView = UIStackView().then {
@@ -48,28 +117,29 @@ class ProductCollectionCell: UICollectionViewCell {
             $0.clipsToBounds = true
         }
         couponLabelContainerView = UIView().then {
-            $0.backgroundColor = .systemIndigo.withAlphaComponent(0.9)
+            $0.backgroundColor = couponLabelBackgroundColor
             $0.isHidden = true
         }
         couponLabel = UILabel().then {
-            $0.textColor = .white
-            $0.font = .systemFont(ofSize: 11, weight: .regular)
-            $0.text = "쿠폰"
+            $0.textAlignment = couponLabelConfig.textAlignment
+            $0.textColor = couponLabelConfig.color
+            $0.font = couponLabelConfig.font
+            $0.text = couponLabelName
         }
         brandLabel = UILabel().then {
-            $0.textAlignment = .left
-            $0.textColor = .gray
-            $0.font = .systemFont(ofSize: 12)
+            $0.textAlignment = brandLabelConfig.textAlignment
+            $0.textColor = brandLabelConfig.color
+            $0.font = brandLabelConfig.font
         }
         priceLabel = UILabel().then {
-            $0.textAlignment = .left
-            $0.textColor = .label
-            $0.font = .systemFont(ofSize: 16)
+            $0.textAlignment = priceLabelConfig.textAlignment
+            $0.textColor = priceLabelConfig.color
+            $0.font = priceLabelConfig.font
         }
         saleRateLabel = UILabel().then {
-            $0.textAlignment = .left
-            $0.textColor = .orange
-            $0.font = .systemFont(ofSize: 12)
+            $0.textAlignment = saleRateLabelConfig.textAlignment
+            $0.textColor = saleRateLabelConfig.color
+            $0.font = saleRateLabelConfig.font
         }
 
         contentView.addSubview(vStackView)
@@ -78,7 +148,7 @@ class ProductCollectionCell: UICollectionViewCell {
         imageContainerView.addSubview(productImageView)
         imageContainerView.addSubview(couponLabelContainerView)
         couponLabelContainerView.addSubview(couponLabel)
-        vStackView.addVerticalSpacer(5)
+        vStackView.addVerticalSpacer(10)
         vStackView.addArrangedSubview(brandLabel)
 
         hStackView.addArrangedSubview(priceLabel)
@@ -102,8 +172,8 @@ class ProductCollectionCell: UICollectionViewCell {
             $0.width.equalToSuperview()
         }
         couponLabelContainerView.snp.makeConstraints {
-            $0.width.equalTo(35)
-            $0.height.equalTo(25)
+            $0.width.equalTo(couponLabelSize.width)
+            $0.height.equalTo(couponLabelSize.height)
             $0.left.bottom.equalToSuperview()
         }
         couponLabel.snp.makeConstraints {
@@ -111,7 +181,7 @@ class ProductCollectionCell: UICollectionViewCell {
         }
     }
 
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         productImageView.image = nil
         couponLabelContainerView.isHidden = true
@@ -120,11 +190,13 @@ class ProductCollectionCell: UICollectionViewCell {
         saleRateLabel.text = nil
     }
 
-    func apply(
+    public func apply(
         imageURL: String?,
         brandName: String,
         price: Int,
+        priceLabelSuffix: String = "원",
         saleRate: Int,
+        saleRateLabelSuffix: String = "%",
         hasCoupone: Bool
     ) {
         if let urlString = imageURL,
@@ -132,8 +204,12 @@ class ProductCollectionCell: UICollectionViewCell {
             UIHelper.loadImage(imageURL: imageURL, imageView: productImageView)
         }
         brandLabel.text = brandName
-        priceLabel.text = "\(price)원"
-        saleRateLabel.text = "\(saleRate)%"
+        let numberFormatter = NumberFormatter().then {
+            $0.numberStyle = .decimal
+            $0.maximumFractionDigits = 0
+        }
+        priceLabel.text = "\(numberFormatter.string(from: NSNumber(value: price))!)\(priceLabelSuffix)"
+        saleRateLabel.text = "\(saleRate)\(saleRateLabelSuffix)"
         couponLabelContainerView.isHidden = !hasCoupone
     }
 }

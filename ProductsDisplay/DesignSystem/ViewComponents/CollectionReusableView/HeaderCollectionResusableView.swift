@@ -17,6 +17,24 @@ public class HeaderCollectionResusableView: UICollectionReusableView {
     public var iconImageView: UIImageView!
     public var button: UIButton!
 
+    public var itemSpacing: CGFloat = 10 {
+        didSet {
+            hStackView.spacing = itemSpacing
+        }
+    }
+
+    public var titleLabelFont: UIFont = .systemFont(ofSize: 20, weight: .bold) {
+        didSet {
+            titleLabel.font = titleLabelFont
+        }
+    }
+
+    public var titleLabelColor: UIColor = .label {
+        didSet {
+            titleLabel.textColor = titleLabelColor
+        }
+    }
+
     public var buttonTitleFont: UIFont = .systemFont(ofSize: 15, weight: .light) {
         didSet {
             button.setTitle(
@@ -60,6 +78,24 @@ public class HeaderCollectionResusableView: UICollectionReusableView {
         }
     }
 
+    public var buttonSize: CGSize = .init(width: 60, height: 60) {
+        didSet {
+            button.snp.updateConstraints {
+                $0.width.equalTo(buttonSize.width)
+                $0.height.equalTo(buttonSize.height)
+            }
+        }
+    }
+
+    public var iconImageSize: CGSize = .init(width: 20, height: 20) {
+        didSet {
+            iconImageView.snp.updateConstraints {
+                $0.width.equalTo(iconImageSize.width)
+                $0.height.equalTo(iconImageSize.height)
+            }
+        }
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -68,14 +104,14 @@ public class HeaderCollectionResusableView: UICollectionReusableView {
         super.init(frame: frame)
         hStackView = UIStackView().then {
             $0.axis = .horizontal
-            $0.spacing = 10
+            $0.spacing = itemSpacing
             $0.alignment = .center
         }
 
         titleLabel = UILabel().then {
             $0.textAlignment = .left
-            $0.textColor = .label
-            $0.font = .systemFont(ofSize: 20, weight: .bold)
+            $0.textColor = titleLabelColor
+            $0.font = titleLabelFont
             $0.numberOfLines = 0
         }
         iconImageView = UIImageView().then {
@@ -107,12 +143,14 @@ public class HeaderCollectionResusableView: UICollectionReusableView {
         }
         iconImageView.snp.makeConstraints {
             $0.centerY.equalTo(titleLabel)
-            $0.width.height.equalTo(20)
+            $0.width.equalTo(iconImageSize.width)
+            $0.height.equalTo(iconImageSize.height)
         }
         button.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.right.equalToSuperview()
-            $0.width.height.equalTo(60)
+            $0.width.equalTo(buttonSize.width)
+            $0.height.equalTo(buttonSize.height)
         }
     }
 

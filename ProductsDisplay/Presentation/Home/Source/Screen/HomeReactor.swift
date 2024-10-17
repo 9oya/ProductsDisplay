@@ -39,9 +39,9 @@ class HomeReactor: Reactor, Stepper {
     }
 
     enum Mutation {
-        case setSections([SectionModel])
+        case setSections(sections: [SectionModel], pages: [Int])
         case setPages(sectionIndex: Int)
-        case setItems(sectionIndex: Int)
+        case setItems(sectionIndex: Int, items: [Item])
         case setBannerPage(index: Int)
     }
 
@@ -52,11 +52,21 @@ class HomeReactor: Reactor, Stepper {
                 .fetchProducts()
                 .asObservable()
                 .map(toSectionModels(from:))
-                .map { .setSections($0) }
+                .map { sections in
+                    let pages = sections.map { _ in 1 }
+                    return .setSections(
+                        sections: sections,
+                        pages: pages
+                    )
+                }
         case .moreButtonDidTap(let sectionIndex):
             return .just(.setPages(sectionIndex: sectionIndex))
         case .refreshButtonDidTap(let sectionIndex):
-            return .just(.setItems(sectionIndex: sectionIndex))
+            let shuffledItems = currentState.sections[sectionIndex].items.shuffled()
+            return .just(.setItems(
+                sectionIndex: sectionIndex,
+                items: shuffledItems
+            ))
         case .bannerPageIsChanged(let index):
             return .just(.setBannerPage(index: index))
         }
@@ -65,15 +75,15 @@ class HomeReactor: Reactor, Stepper {
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
-        case .setSections(let sections):
+        case let .setSections(sections, pages):
             newState.sections = sections
-            newState.currentPages = sections.map { _ in 1 }
+            newState.currentPages = pages
             newState.prevPages = newState.currentPages
         case .setPages(let sectionIndex):
             newState.prevPages = newState.currentPages
             newState.currentPages[sectionIndex] += 1
-        case .setItems(let sectionIndex):
-            newState.sections[sectionIndex].items = newState.sections[sectionIndex].items.shuffled()
+        case let .setItems(sectionIndex, items):
+            newState.sections[sectionIndex].items = items
         case .setBannerPage(let index):
             newState.bannerPageIndex = index
         }
@@ -88,11 +98,19 @@ extension HomeReactor {
             let contentType = data.contents.type
             var footer: SectionModel.Footer?
             if let _footer = data.footer {
-                footer = .init(type: _footer.type, title: _footer.title, iconURL: _footer.iconURL)
+                footer = .init(
+                    type: _footer.type,
+                    title: _footer.title,
+                    iconURL: _footer.iconURL
+                )
             }
             var header: SectionModel.Header?
             if let _header = data.header {
-                header = .init(title: _header.title, iconURL: _header.iconURL, linkURL: _header.linkURL)
+                header = .init(
+                    title: _header.title,
+                    iconURL: _header.iconURL,
+                    linkURL: _header.linkURL
+                )
             }
             if let _banners = data.contents.banners {
                 return .init(
@@ -121,8 +139,8 @@ extension HomeReactor {
             return .init(
                 contentType: contentType,
                 items: [],
-                footer: nil,
-                header: nil
+                footer: footer,
+                header: header
             )
         }
         return sections

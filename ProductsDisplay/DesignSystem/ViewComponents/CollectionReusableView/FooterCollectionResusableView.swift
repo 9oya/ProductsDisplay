@@ -17,7 +17,7 @@ public class FooterCollectionResusableView: UICollectionReusableView {
         case refresh = "REFRESH"
         case more = "MORE"
 
-        func toTitle() -> String {
+        fileprivate func toTitle() -> String {
             switch self {
             case .refresh:
                 return "새로운 추천"
@@ -32,7 +32,7 @@ public class FooterCollectionResusableView: UICollectionReusableView {
         let color: UIColor
         let width: CGFloat
 
-        init(radius: CGFloat, color: UIColor, width: CGFloat) {
+        public init(radius: CGFloat, color: UIColor, width: CGFloat) {
             self.radius = radius
             self.color = color
             self.width = width
@@ -140,7 +140,8 @@ public class FooterCollectionResusableView: UICollectionReusableView {
             UIHelper.loadImage(
                 imageURL: imgURL,
                 imageView: button,
-                imageSize: imageSize
+                imageSize: imageSize,
+                buttonImagePadding: 5
             )
         }
         button.setTitle(

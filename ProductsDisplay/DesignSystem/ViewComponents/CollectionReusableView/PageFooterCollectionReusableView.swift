@@ -22,33 +22,31 @@ public class PageFooterCollectionReusableView: UICollectionReusableView {
             pageNumberLabel.text = pageNumberLabelText
         }
     }
+
     public var pageNumberLabelFont: UIFont = .systemFont(ofSize: 12) {
         didSet {
             pageNumberLabel.font = pageNumberLabelFont
         }
     }
+
     public var pageNumberLabelTextColor: UIColor = .white {
         didSet {
             pageNumberLabel.textColor = pageNumberLabelTextColor
         }
     }
+
     public var pageNumberContainerBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.5) {
         didSet {
             pageNumberContainerView.backgroundColor = pageNumberContainerBackgroundColor
         }
     }
-    public var containerWidth: CGFloat = 70 {
+
+    public var pageNumberContainerSize: CGSize = .init(width: 70, height: 25) {
         didSet {
             pageNumberContainerView.snp.updateConstraints {
-                $0.width.equalTo(containerWidth)
-            }
-        }
-    }
-    public var containerHeight: CGFloat = 25 {
-        didSet {
-            pageNumberContainerView.snp.updateConstraints {
-                $0.height.equalTo(containerHeight)
-                $0.top.equalToSuperview().offset(-containerHeight)
+                $0.width.equalTo(pageNumberContainerSize.width)
+                $0.height.equalTo(pageNumberContainerSize.height)
+                $0.top.equalToSuperview().offset(-pageNumberContainerSize.height)
             }
         }
     }
@@ -69,10 +67,10 @@ public class PageFooterCollectionReusableView: UICollectionReusableView {
         addSubview(pageNumberContainerView)
         pageNumberContainerView.addSubview(pageNumberLabel)
         pageNumberContainerView.snp.makeConstraints {
-            $0.height.equalTo(containerHeight)
-            $0.width.equalTo(containerWidth)
             $0.right.equalToSuperview()
-            $0.top.equalToSuperview().offset(-containerHeight)
+            $0.width.equalTo(pageNumberContainerSize.width)
+            $0.height.equalTo(pageNumberContainerSize.height)
+            $0.top.equalToSuperview().offset(-pageNumberContainerSize.height)
         }
         pageNumberLabel.snp.makeConstraints {
             $0.center.equalToSuperview()

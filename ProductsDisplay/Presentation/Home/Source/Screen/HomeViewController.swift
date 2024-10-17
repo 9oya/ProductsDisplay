@@ -32,11 +32,11 @@ class HomeViewController: UIViewController, View {
     private typealias PageFooterRegistration = UICollectionView.SupplementaryRegistration<PageFooterCollectionReusableView>
 
     // Constants
-    let sectionContentsInset: NSDirectionalEdgeInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
-    let itemContentsInset: NSDirectionalEdgeInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
-    let headerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
-    let footerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
-    let bannerFooterHeightDimension: NSCollectionLayoutDimension = .absolute(0.1)
+    private let sectionContentsInset: NSDirectionalEdgeInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
+    private let itemContentsInset: NSDirectionalEdgeInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+    private let headerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
+    private let footerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
+    private let bannerFooterHeightDimension: NSCollectionLayoutDimension = .absolute(0.1)
 
     func bind(reactor: HomeReactor) {
         setupUI()
@@ -146,7 +146,11 @@ extension HomeViewController {
             guard let banner = item.banner else {
                 return
             }
-            cell.apply(imageURL: banner.thumbnailURL)
+            cell.apply(
+                imageURL: banner.thumbnailURL,
+                title: banner.title,
+                subTitle: banner.description
+            )
         }
         let productCellRegistration = ProductCellRegistration { cell, _, item in
             guard let goods = item.goods else {
@@ -300,6 +304,7 @@ extension HomeViewController {
 
             let sectionModel = state.sections[sectionIndex]
 
+            // Set layout sections
             var layoutSection: NSCollectionLayoutSection
             switch sectionModel.kind {
             case .banner:
@@ -312,6 +317,7 @@ extension HomeViewController {
                 layoutSection = self.getStyleLayout()
             }
 
+            // Set boundary supplementary
             var boundarySupplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem] = []
             if sectionModel.header != nil {
                 let headerSize: NSCollectionLayoutSize = .init(
@@ -394,7 +400,7 @@ extension HomeViewController {
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalWidth(0.6)
+                heightDimension: .fractionalWidth(6/10)
             ),
             subitems: [item, item, item]
         )
@@ -414,7 +420,7 @@ extension HomeViewController {
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .estimated(UIScreen.main.bounds.width),
-                heightDimension: .fractionalWidth(0.6)
+                heightDimension: .fractionalWidth(0.5)
             ),
             subitems: [item]
         )
