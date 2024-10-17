@@ -38,6 +38,17 @@ class HomeViewController: UIViewController, View {
     private let footerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
     private let bannerFooterHeightDimension: NSCollectionLayoutDimension = .absolute(0.1)
 
+    // Auto Sliding
+    private var timer: Timer?
+    public var automaticSlidingInterval: CGFloat = 0.0 {
+        didSet {
+            self.cancelTimer()
+            if self.automaticSlidingInterval > 0 {
+                self.startTimer()
+            }
+        }
+    }
+
     func bind(reactor: HomeReactor) {
         setupUI()
         bindAction(reactor)
@@ -73,6 +84,7 @@ class HomeViewController: UIViewController, View {
                 }
 
                 owner.diffableDataSource.apply(owner.snapshot, animatingDifferences: true)
+                owner.automaticSlidingInterval = 3
             })
             .disposed(by: disposeBag)
 
@@ -104,6 +116,48 @@ class HomeViewController: UIViewController, View {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
+}
+
+extension HomeViewController {
+
+    // MARK: Auto Sliding
+
+    private func startTimer() {
+        guard self.automaticSlidingInterval > 0 && self.timer == nil else {
+            return
+        }
+        self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(self.automaticSlidingInterval),
+                                          target: self,
+                                          selector: #selector(self.flipNext(sender:)),
+                                          userInfo: nil,
+                                          repeats: true)
+        RunLoop.current.add(self.timer!, forMode: .common)
+    }
+
+    @objc
+    private func flipNext(sender: Timer?) {
+        guard let state = reactor?.currentState,
+        let bannerCount = state.sections.filter({ $0.kind == .banner }).first?.items.count,
+            bannerCount > 1 else {
+                return
+            }
+        let currentPage = state.bannerPageIndex
+        var nextPage = currentPage + 1
+        var animated: Bool = true
+        if nextPage >= bannerCount {
+            nextPage = nextPage % bannerCount
+            animated = false
+        }
+        collectionView.scrollToItem(at: IndexPath(item: nextPage, section: 0), at: .left, animated: animated)
+    }
+
+    private func cancelTimer() {
+        guard self.timer != nil else {
+            return
+        }
+        self.timer!.invalidate()
+        self.timer = nil
+    }
 }
 
 extension HomeViewController {
