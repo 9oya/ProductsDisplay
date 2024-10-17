@@ -25,15 +25,15 @@ enum HeaderType {
     case icon
 }
 
-struct ProductListEntity: Equatable {
+public struct ProductListEntity: Equatable {
     let data: [Datum]
 
-    init(data: [Datum]) {
+    public init(data: [Datum]) {
         self.data = data
     }
 
-    struct Datum: Equatable {
-        static func == (lhs: ProductListEntity.Datum, rhs: ProductListEntity.Datum) -> Bool {
+    public struct Datum: Equatable {
+        public static func == (lhs: ProductListEntity.Datum, rhs: ProductListEntity.Datum) -> Bool {
             return lhs.contents == rhs.contents && lhs.header == rhs.header && lhs.footer == rhs.footer
         }
         
@@ -62,7 +62,7 @@ struct ProductListEntity: Equatable {
         }
     }
 
-    struct Banner: Hashable {
+    struct Banner: Equatable {
         let linkURL: String
         let thumbnailURL: String
         let title, description, keyword: String
@@ -76,7 +76,7 @@ struct ProductListEntity: Equatable {
         }
     }
 
-    struct Goods: Hashable {
+    struct Goods: Equatable {
         let linkURL: String
         let thumbnailURL: String
         let brandName: String
@@ -93,7 +93,7 @@ struct ProductListEntity: Equatable {
         }
     }
 
-    struct Style: Hashable {
+    struct Style: Equatable {
         let linkURL: String
         let thumbnailURL: String
 

@@ -7,7 +7,7 @@
 
 import RxSwift
 
-protocol ProductListUseCase {
+public protocol ProductListUseCase {
 
     func fetchProducts() -> Single<ProductListEntity>
 }

@@ -7,7 +7,7 @@
 
 import RxSwift
 
-protocol RemoteProductListDataSource {
+public protocol RemoteProductListDataSource {
 
     func fetchProducts() -> Single<ProductListDTO>
 }

@@ -7,14 +7,18 @@
 
 import Foundation
 
-struct ProductListDTO: Codable {
-    let data: [Datum]
+public struct ProductListDTO: Codable {
+    public let data: [Datum]
+
+    public init(data: [Datum]) {
+        self.data = data
+    }
 
     func toEntity() -> ProductListEntity {
         return .init(data: data.map { $0.toEntity() })
     }
 
-    struct Datum: Codable {
+    public struct Datum: Codable {
         let contents: Contents
         let header: Header?
         let footer: Footer?
