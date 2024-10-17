@@ -14,21 +14,15 @@ enum SectionKind: String {
     case scroll = "SCROLL"
     case style = "STYLE"
 
-    var columnCount: Int {
+    var itemsPerPage: Int {
         switch self {
-        case .banner:
-            return 1
-        default:
-            return 2
-        }
-    }
-
-    func orthogonalScrollingBehavior() -> UICollectionLayoutSectionOrthogonalScrollingBehavior {
-        switch self {
-        case .banner:
-            return .groupPagingCentered
-        default:
-            return .none
+        case .banner, .scroll:
+            // 페이징 없음
+            return 0
+        case .grid:
+            return 6
+        case .style:
+            return 6
         }
     }
 
@@ -49,10 +43,54 @@ enum SectionKind: String {
 struct SectionModel: Hashable {
     let kind: SectionKind
     var items: [Item]
+    let header: Header?
+    let footer: Footer?
 
-    init(contentType: ContentType, items: [Item]) {
+    init(
+        contentType: ContentType,
+        items: [Item],
+        footer: Footer?,
+        header: Header?
+    ) {
         self.kind = SectionKind(contentType: contentType)
         self.items = items
+        self.footer = footer
+        self.header = header
+    }
+
+    struct Footer: Hashable {
+        let type: FooterType
+        let title: String
+        let iconURL: String?
+
+        init(type: FooterType, title: String, iconURL: String?) {
+            self.type = type
+            self.title = title
+            self.iconURL = iconURL
+        }
+    }
+
+    struct Header: Hashable {
+        let type: HeaderType
+        let title: String
+        let iconURL: String?
+        let linkURL: String?
+
+        init(title: String, iconURL: String?, linkURL: String?) {
+            self.title = title
+            self.iconURL = iconURL
+            self.linkURL = linkURL
+
+            var type: HeaderType
+            if linkURL != nil {
+                type = .all
+            } else if iconURL != nil {
+                type = .icon
+            } else {
+                type = .normal
+            }
+            self.type = type
+        }
     }
 }
 

@@ -42,6 +42,7 @@ class HomeFlow: Flow {
             [homeViewController],
             animated: false
         )
+        rootViewController.isNavigationBarHidden = true
 
         return .one(flowContributor: .contribute(
             withNextPresentable: homeViewController,

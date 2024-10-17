@@ -28,6 +28,7 @@ class HomeViewController: UIViewController, View {
     private typealias StyleCellRegistration = UICollectionView.CellRegistration<StyleCollectionCell, Item>
     private typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<HeaderCollectionResusableView>
     private typealias FooterRegistration = UICollectionView.SupplementaryRegistration<FooterCollectionResusableView>
+    private typealias PageFooterRegistration = UICollectionView.SupplementaryRegistration<PageFooterReusableView>
 
     func bind(reactor: HomeReactor) {
         setupUI()
@@ -44,10 +45,51 @@ class HomeViewController: UIViewController, View {
 
     func bindState(_ reactor: HomeReactor) {
         reactor.state
-            .compactMap { $0.sections }
+            .map { $0.sections }
+            .filter { $0.count > 0 }
             .distinctUntilChanged()
             .bind(with: self, onNext: { owner, sections in
-                owner.configureInitialSnapshot(sections: sections)
+                let state = reactor.currentState
+
+                owner.snapshot = NSDiffableDataSourceSnapshot<SectionKind, Item>()
+
+                for (index, section) in sections.enumerated() {
+                    owner.snapshot.appendSections([section.kind])
+
+                    var endItemCnt = state.currentPages[index] * section.kind.itemsPerPage
+                    if endItemCnt == 0 || endItemCnt > section.items.count {
+                        endItemCnt = section.items.count
+                    }
+                    let items = Array(section.items[0..<endItemCnt])
+                    owner.snapshot.appendItems(items)
+                }
+
+                owner.diffableDataSource.apply(owner.snapshot, animatingDifferences: true)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.currentPages }
+            .filter { $0.count > 0 }
+            .distinctUntilChanged()
+            .bind(with: self, onNext: { owner, currentPage in
+                for (sectionIndex, currentPage) in currentPage.enumerated() {
+                    let prevPage = reactor.currentState.prevPages[sectionIndex]
+                    guard prevPage < currentPage else {
+                        continue
+                    }
+                    let section = reactor.currentState.sections[sectionIndex]
+                    var endItemCnt = section.kind.itemsPerPage * currentPage
+
+                    if endItemCnt > section.items.count {
+                        endItemCnt = section.items.count
+                    }
+
+                    let startItemIdx = prevPage * section.kind.itemsPerPage
+                    let items = Array(section.items[startItemIdx..<endItemCnt])
+                    owner.snapshot.appendItems(items, toSection: section.kind)
+                    owner.diffableDataSource.apply(owner.snapshot, animatingDifferences: true)
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -59,19 +101,26 @@ extension HomeViewController: UICollectionViewDelegate {
 extension HomeViewController {
 
     func configureCellRegistrationAndDataSource() {
-        let bannerCellRegistration = BannerCellRegistration { cell, _, item in
+        let bannerCellRegistration = BannerCellRegistration { [weak self] cell, indexPath, item in
             guard let banner = item.banner else {
                 return
             }
-            let imageURL = banner.thumbnailURL
-            cell.apply(imageURL: imageURL)
+            guard let self = self, let reactor = self.reactor else {
+                return
+            }
+            cell.apply(imageURL: banner.thumbnailURL)
         }
         let productCellRegistration = ProductCellRegistration { cell, _, item in
             guard let goods = item.goods else {
                 return
             }
-            let imageURL = goods.thumbnailURL
-            cell.apply(imageURL: imageURL)
+            cell.apply(
+                imageURL: goods.thumbnailURL,
+                brandName: goods.brandName,
+                price: goods.price,
+                saleRate: goods.saleRate,
+                hasCoupone: goods.hasCoupon
+            )
         }
         let styleCellRegistration = StyleCellRegistration { cell, _, item in
             guard let style = item.style else {
@@ -108,11 +157,73 @@ extension HomeViewController {
     }
 
     func configureSupplementaryViewRegistrationAndDataSource() {
-        let headerRegistration = HeaderRegistration(elementKind: String(describing: HeaderCollectionResusableView.self)) { supplementaryView, elementKind, indexPath in
-            supplementaryView.backgroundColor = .red
+        let headerRegistration = HeaderRegistration(elementKind: String(describing: HeaderCollectionResusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self = self,
+                  let reactor = self.reactor else {
+                return
+            }
+            let state = reactor.currentState
+            let section = state.sections[indexPath.section]
+
+            if let header = section.header {
+                supplementaryView.apply(
+                    title: header.title,
+                    iconURL: header.iconURL,
+                    linkURL: header.linkURL
+                )
+            }
         }
-        let footerRegistration = FooterRegistration(elementKind: String(describing: FooterCollectionResusableView.self)) { supplementaryView, elementKind, indexPath in
-            supplementaryView.backgroundColor = .blue
+        let footerRegistration = FooterRegistration(elementKind: String(describing: FooterCollectionResusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self = self,
+                  let reactor = self.reactor else {
+                return
+            }
+            let state = reactor.currentState
+
+            supplementaryView.backgroundColor = .white
+            let section = state.sections[indexPath.section]
+            guard let footerType: FooterType = section.footer?.type else {
+                return
+            }
+            supplementaryView.apply(
+                footerType: footerType,
+                iconURL: section.footer?.iconURL
+            )
+
+            switch footerType {
+            case .more:
+                supplementaryView.button.rx.tap
+                    .filter {
+                        state.sections[indexPath.section].items.count > state.currentPages[indexPath.section] * state.sections[indexPath.section].kind.itemsPerPage
+                    }
+                    .observe(on: MainScheduler.asyncInstance)
+                    .map { Reactor.Action.moreButtonDidTap(sectionIndex: indexPath.section) }
+                    .bind(to: reactor.action)
+                    .disposed(by: supplementaryView.disposeBag)
+            case .refresh:
+                supplementaryView.button.rx.tap
+                    .observe(on: MainScheduler.asyncInstance)
+                    .map { Reactor.Action.refreshButtonDidTap(sectionIndex: indexPath.section) }
+                    .bind(to: reactor.action)
+                    .disposed(by: supplementaryView.disposeBag)
+            }
+        }
+        let pageFooterRegistration = PageFooterRegistration(elementKind: String(describing: PageFooterReusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self = self,
+                  let reactor = self.reactor else {
+                return
+            }
+
+            supplementaryView.apply()
+
+            let bannerCnt = reactor.currentState.sections[indexPath.section].items.count
+            reactor.state
+                .map { $0.bannerPageIndex }
+                .asObservable()
+                .map { "\($0 + 1)/\(bannerCnt)" }
+                .bind(to: supplementaryView.pageNumberLabel.rx.text)
+                .disposed(by: supplementaryView.disposeBag)
+
         }
         diffableDataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
             switch elementKind {
@@ -126,45 +237,41 @@ extension HomeViewController {
                     using: footerRegistration,
                     for: indexPath
                 )
+            case String(describing: PageFooterReusableView.self):
+                return collectionView.dequeueConfiguredReusableSupplementary(
+                    using: pageFooterRegistration,
+                    for: indexPath
+                )
             default:
                 return UICollectionReusableView()
             }
         }
     }
 
-    func configureInitialSnapshot(sections: [SectionModel]) {
-        snapshot = NSDiffableDataSourceSnapshot<SectionKind, Item>()
-
-        for section in sections {
-            snapshot.appendSections([section.kind])
-            snapshot.appendItems(section.items)
-        }
-
-        diffableDataSource.apply(snapshot, animatingDifferences: true)
-    }
-
     func getLayout() -> UICollectionViewLayout {
-        return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            let content = self.reactor?.currentState.products?.data[sectionIndex]
-            let contentType: ContentType = content?.contents.type ?? .banner
-            let headerType: HeaderType? = content?.header?.type
-            let footerType: FooterType? = content?.footer?.type
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ -> NSCollectionLayoutSection? in
+            guard let self = self,
+                  let state = self.reactor?.currentState else {
+                return nil
+            }
 
-            var section: NSCollectionLayoutSection
-            switch contentType {
+            let sectionModel = state.sections[sectionIndex]
+
+            var layoutSection: NSCollectionLayoutSection
+            switch sectionModel.kind {
             case .banner:
-                section = self.getBannerLayout(headerType: headerType, footerType: footerType)
+                layoutSection = self.getBannerLayout()
             case .grid:
-                section = self.getGridLayout(headerType: headerType, footerType: footerType)
+                layoutSection = self.getGridLayout()
             case .scroll:
-                section = self.getScrollLayout(headerType: headerType, footerType: footerType)
+                layoutSection = self.getScrollLayout()
             case .style:
-                section = self.getStyleLayout(headerType: headerType, footerType: footerType)
+                layoutSection = self.getStyleLayout()
             }
 
             var boundarySupplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem] = []
-            if let _ = headerType {
-                let headerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
+            if sectionModel.header != nil {
+                let headerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80.0))
                 let header: NSCollectionLayoutBoundarySupplementaryItem = .init(
                     layoutSize: headerSize,
                     elementKind: String(describing: HeaderCollectionResusableView.self),
@@ -172,8 +279,10 @@ extension HomeViewController {
                 )
                 boundarySupplementaryItems.append(header)
             }
-            if let _ = footerType {
-                let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(100.0))
+            if sectionModel.footer != nil,
+               sectionModel.items.count > state.currentPages[sectionIndex] * sectionModel.kind.itemsPerPage {
+
+                let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80.0))
                 let footer = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: footerSize,
                     elementKind: String(describing: FooterCollectionResusableView.self),
@@ -181,16 +290,22 @@ extension HomeViewController {
                 )
                 boundarySupplementaryItems.append(footer)
             }
-            section.boundarySupplementaryItems = boundarySupplementaryItems
+            if sectionModel.kind == .banner {
+                let pageFooterSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(0.1))
+                let pageFooter = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: pageFooterSize,
+                    elementKind: String(describing: PageFooterReusableView.self),
+                    alignment: .bottom
+                )
+                boundarySupplementaryItems.append(pageFooter)
+            }
+            layoutSection.boundarySupplementaryItems = boundarySupplementaryItems
 
-            return section
+            return layoutSection
         }
     }
 
-    func getBannerLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getBannerLayout() -> NSCollectionLayoutSection {
         let item: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalHeight(1)
@@ -205,61 +320,64 @@ extension HomeViewController {
         let section = NSCollectionLayoutSection(group: mainGroup)
         section.orthogonalScrollingBehavior = .groupPagingCentered
 
+        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, contentOffset, environment in
+            guard let self = self else {
+                return
+            }
+            let bannerIndex = Int(max(0, round(contentOffset.x / environment.container.contentSize.width)))
+            self.reactor?.action.onNext(.bannerPageIsChanged(index: bannerIndex))
+        }
+
         return section
     }
 
-    func getGridLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getGridLayout() -> NSCollectionLayoutSection {
         let item: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
         ))
+        item.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalWidth(0.53)
+                heightDimension: .fractionalWidth(0.6)
             ),
             subitems: [item, item, item]
         )
         let section: NSCollectionLayoutSection = .init(group: mainGroup)
+        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         section.orthogonalScrollingBehavior = .none
 
         return section
     }
 
-    func getScrollLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getScrollLayout() -> NSCollectionLayoutSection {
         let item: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(0.3),
             heightDimension: .fractionalHeight(1)
         ))
-
+        item.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .estimated(UIScreen.main.bounds.width),
-                heightDimension: .fractionalWidth(1/3)
+                heightDimension: .fractionalWidth(0.6)
             ),
             subitems: [item]
         )
         let section = NSCollectionLayoutSection(group: mainGroup)
+        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         section.orthogonalScrollingBehavior = .continuous
 
         return section
     }
 
-    func getStyleLayout(
-        headerType: HeaderType?,
-        footerType: FooterType?
-    ) -> NSCollectionLayoutSection {
+    func getStyleLayout() -> NSCollectionLayoutSection {
         let itemA: NSCollectionLayoutItem = .init(layoutSize: .init(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalHeight(1/2)
         ))
         itemA.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        itemA.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let vGroup: NSCollectionLayoutGroup = .vertical(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1/3),
@@ -272,6 +390,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(2/3),
             heightDimension: .fractionalHeight(1)
         ))
+        itemB.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let hGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
@@ -284,6 +403,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
         ))
+        itemC.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         let hGroupB: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
@@ -300,12 +420,12 @@ extension HomeViewController {
         )
         let section = NSCollectionLayoutSection(group: mainVGroup)
         section.orthogonalScrollingBehavior = .none
-
+        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
         return section
     }
 
     func setupUI() {
-        view.backgroundColor = .yellow
+        view.backgroundColor = .systemBackground
 
         configureCollectionView()
     }
@@ -318,7 +438,6 @@ extension HomeViewController {
             $0.isScrollEnabled = true
             $0.showsHorizontalScrollIndicator = false
             $0.showsVerticalScrollIndicator = true
-//            $0.scrollIndicatorInsets = UIEdgeInsets(top: -2, left: 0, bottom: 0, right: 4)
             $0.contentInset = .zero
             $0.backgroundColor = .clear
             $0.clipsToBounds = true

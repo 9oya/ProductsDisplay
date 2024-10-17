@@ -64,6 +64,9 @@
 		BF772EF32CBB992000187EA8 /* ViewComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF22CBB992000187EA8 /* ViewComponent.swift */; };
 		BF772EF52CBBD96E00187EA8 /* ProductCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF42CBBD96E00187EA8 /* ProductCollectionCell.swift */; };
 		BF772EF72CBBD9A200187EA8 /* StyleCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF62CBBD9A200187EA8 /* StyleCollectionCell.swift */; };
+		BFAB87D02CC09C680073A9CF /* PageFooterReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAB87CF2CC09C680073A9CF /* PageFooterReusableView.swift */; };
+		BFD98A262CBF41F800B8D687 /* Extension+UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD98A252CBF41F800B8D687 /* Extension+UIButton.swift */; };
+		BFD98A282CBF421B00B8D687 /* Extension+UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD98A272CBF421B00B8D687 /* Extension+UIStackView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,6 +129,9 @@
 		BF772EF22CBB992000187EA8 /* ViewComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponent.swift; sourceTree = "<group>"; };
 		BF772EF42CBBD96E00187EA8 /* ProductCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCollectionCell.swift; sourceTree = "<group>"; };
 		BF772EF62CBBD9A200187EA8 /* StyleCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleCollectionCell.swift; sourceTree = "<group>"; };
+		BFAB87CF2CC09C680073A9CF /* PageFooterReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageFooterReusableView.swift; sourceTree = "<group>"; };
+		BFD98A252CBF41F800B8D687 /* Extension+UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIButton.swift"; sourceTree = "<group>"; };
+		BFD98A272CBF421B00B8D687 /* Extension+UIStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIStackView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,7 +259,6 @@
 		BF772E572CBA36AC00187EA8 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				BF772EDF2CBA61BB00187EA8 /* BasePresentation */,
 				BF772EBD2CBA4C3000187EA8 /* Home */,
 			);
 			path = Presentation;
@@ -530,40 +535,18 @@
 		BF772EDE2CBA61A200187EA8 /* DesignSystem */ = {
 			isa = PBXGroup;
 			children = (
+				BF772EEF2CBB918D00187EA8 /* Utilities */,
+				BFD98A242CBF41E900B8D687 /* Extensions */,
 				BF772EF22CBB992000187EA8 /* ViewComponent.swift */,
 			);
 			path = DesignSystem;
-			sourceTree = "<group>";
-		};
-		BF772EDF2CBA61BB00187EA8 /* BasePresentation */ = {
-			isa = PBXGroup;
-			children = (
-				BF772EE12CBA61CB00187EA8 /* Sources */,
-			);
-			path = BasePresentation;
-			sourceTree = "<group>";
-		};
-		BF772EE12CBA61CB00187EA8 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				BF772EEF2CBB918D00187EA8 /* Utilities */,
-				BF772EE22CBA61D000187EA8 /* Extensions */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		BF772EE22CBA61D000187EA8 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		BF772EE52CBB79C700187EA8 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				BF772EE62CBB79E100187EA8 /* BannerCollectionCell.swift */,
+				BFAB87CF2CC09C680073A9CF /* PageFooterReusableView.swift */,
 				BF772EE82CBB7AE500187EA8 /* FooterCollectionResusableView.swift */,
 				BF772EEA2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift */,
 				BF772EF42CBBD96E00187EA8 /* ProductCollectionCell.swift */,
@@ -586,6 +569,16 @@
 				BF772EF02CBB919600187EA8 /* UIHelper.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		BFD98A242CBF41E900B8D687 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BFD98A252CBF41F800B8D687 /* Extension+UIButton.swift */,
+				BFD98A272CBF421B00B8D687 /* Extension+UIStackView.swift */,
+				BF772EE32CBA61E000187EA8 /* Extension+ViewController+Rx.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -768,13 +761,16 @@
 				BF772E912CBA487900187EA8 /* MoyaNetworkManager.swift in Sources */,
 				BF772ECA2CBA4E1600187EA8 /* HomeFlowSteps.swift in Sources */,
 				BF772EAA2CBA4B9400187EA8 /* ProductListUseCaseImpl.swift in Sources */,
+				BFD98A262CBF41F800B8D687 /* Extension+UIButton.swift in Sources */,
 				BF772EC82CBA4E0900187EA8 /* Extension+Container+HomePresentation.swift in Sources */,
 				BF772E262CBA2E9D00187EA8 /* SceneDelegate.swift in Sources */,
 				BF772EB42CBA4BCC00187EA8 /* ProductListRepositoryImpl.swift in Sources */,
 				BF772EB02CBA4BAB00187EA8 /* ProductListEntity.swift in Sources */,
+				BFAB87D02CC09C680073A9CF /* PageFooterReusableView.swift in Sources */,
 				BF772ED32CBA4E6000187EA8 /* HomeReactor.swift in Sources */,
 				BF772EDB2CBA59FA00187EA8 /* LoggerPlugin.swift in Sources */,
 				BF772EEE2CBB801600187EA8 /* SectionModel.swift in Sources */,
+				BFD98A282CBF421B00B8D687 /* Extension+UIStackView.swift in Sources */,
 				BF772EB82CBA4BE400187EA8 /* ProductListDTO.swift in Sources */,
 				BF772EEB2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift in Sources */,
 				BF772E952CBA48A200187EA8 /* Extension+Container+Networking.swift in Sources */,
@@ -964,8 +960,8 @@
 				INFOPLIST_FILE = ProductsDisplay/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -991,8 +987,8 @@
 				INFOPLIST_FILE = ProductsDisplay/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

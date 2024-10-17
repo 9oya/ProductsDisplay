@@ -7,8 +7,14 @@
 
 import UIKit
 
+import Then
+import SnapKit
+import RxSwift
+
 class FooterCollectionResusableView: UICollectionReusableView {
-    var label: UILabel!
+
+    var disposeBag = DisposeBag()
+    var button: UIButton!
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -16,19 +22,48 @@ class FooterCollectionResusableView: UICollectionReusableView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        label = UILabel().then {
-            $0.text = "Footer"
-            $0.textAlignment = .center
-            $0.textColor = .black
+        button = UIButton().then {
+            $0.setBorder(
+                radius: 30,
+                color: .systemGray5,
+                width: 1
+            )
         }
-        addSubview(label)
-        label.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        addSubview(button)
+        button.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(15)
         }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        disposeBag = DisposeBag()
+        button.setImage(image: nil, padding: 0)
+    }
+
+    func apply(footerType: FooterType, iconURL: String?) {
+        var title = ""
+        switch footerType {
+        case .more:
+            title = "더보기"
+        case .refresh:
+            title = "새로운 추천"
+        }
+        if let iconURL = iconURL, 
+            let imgURL = URL(string: iconURL) {
+            UIHelper.loadImage(
+                imageURL: imgURL,
+                imageView: button,
+                imageSize: .init(width: 20, height: 20)
+            )
+        }
+        button.setTitle(
+            text: title,
+            font: .systemFont(
+                ofSize: 15,
+                weight: .bold
+            ),
+            color: .label
+        )
     }
 }
