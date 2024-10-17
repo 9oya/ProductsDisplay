@@ -10,11 +10,55 @@ import UIKit
 import Then
 import SnapKit
 
-class HeaderCollectionResusableView: UICollectionReusableView {
-    var hStackView: UIStackView!
-    var titleLabel: UILabel!
-    var iconImageView: UIImageView!
-    var button: UIButton!
+public class HeaderCollectionResusableView: UICollectionReusableView {
+
+    private var hStackView: UIStackView!
+    public var titleLabel: UILabel!
+    public var iconImageView: UIImageView!
+    public var button: UIButton!
+
+    public var buttonTitleFont: UIFont = .systemFont(ofSize: 15, weight: .light) {
+        didSet {
+            button.setTitle(
+                attrString: button.configuration?.attributedTitle ?? "",
+                font: buttonTitleFont,
+                color: buttonTitleColor
+            )
+        }
+    }
+
+    public var buttonTitleColor: UIColor = .systemGray {
+        didSet {
+            button.setTitle(
+                attrString: button.configuration?.attributedTitle ?? "",
+                font: buttonTitleFont,
+                color: buttonTitleColor,
+                titleAlignment: buttonTitleAlignment
+            )
+        }
+    }
+
+    public var buttonTitle: String = "전체" {
+        didSet {
+            button.setTitle(
+                text: buttonTitle,
+                font: buttonTitleFont,
+                color: buttonTitleColor,
+                titleAlignment: buttonTitleAlignment
+            )
+        }
+    }
+
+    public var buttonTitleAlignment: UIButton.Configuration.TitleAlignment = .trailing {
+        didSet {
+            button.setTitle(
+                text: buttonTitle,
+                font: buttonTitleFont,
+                color: buttonTitleColor,
+                titleAlignment: buttonTitleAlignment
+            )
+        }
+    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -39,10 +83,10 @@ class HeaderCollectionResusableView: UICollectionReusableView {
         }
         button = UIButton().then {
             $0.setTitle(
-                text: "전체",
-                font: .systemFont(ofSize: 15, weight: .light),
-                color: .systemGray,
-                titleAlignment: .trailing
+                text: buttonTitle,
+                font: buttonTitleFont,
+                color: buttonTitleColor,
+                titleAlignment: buttonTitleAlignment
             )
             $0.isHidden = true
         }
@@ -72,16 +116,21 @@ class HeaderCollectionResusableView: UICollectionReusableView {
         }
     }
 
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         titleLabel.text = nil
         iconImageView.image = nil
         button.isHidden = true
     }
 
-    func apply(title: String, iconURL: String?, linkURL: String?) {
+    public func apply(
+        title: String,
+        iconURL: String?,
+        linkURL: String?
+    ) {
         titleLabel.text = title
-        if let iconURL = iconURL, let imgURL = URL(string: iconURL) {
+        if let iconURL = iconURL, 
+            let imgURL = URL(string: iconURL) {
             UIHelper.loadImage(imageURL: imgURL, imageView: iconImageView)
         }
         button.isHidden = linkURL == nil
