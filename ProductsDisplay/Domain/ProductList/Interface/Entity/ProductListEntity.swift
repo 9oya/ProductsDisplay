@@ -7,19 +7,19 @@
 
 import Foundation
 
-enum ContentType: String {
+public enum ContentType: String {
     case banner = "BANNER"
     case grid = "GRID"
     case scroll = "SCROLL"
     case style = "STYLE"
 }
 
-enum FooterType: String {
+public enum FooterType: String {
     case refresh = "REFRESH"
     case more = "MORE"
 }
 
-enum HeaderType {
+public enum HeaderType {
     case normal
     case all
     case icon
@@ -37,24 +37,24 @@ public struct ProductListEntity: Equatable {
             return lhs.contents == rhs.contents && lhs.header == rhs.header && lhs.footer == rhs.footer
         }
         
-        let contents: Contents
-        let header: Header?
-        let footer: Footer?
+        public let contents: Contents
+        public let header: Header?
+        public let footer: Footer?
 
-        init(contents: Contents, header: Header?, footer: Footer?) {
+        public init(contents: Contents, header: Header?, footer: Footer?) {
             self.contents = contents
             self.header = header
             self.footer = footer
         }
     }
 
-    struct Contents: Equatable {
-        let type: ContentType
-        let banners: [Banner]?
-        let goods: [Goods]?
-        let styles: [Style]?
+    public struct Contents: Equatable {
+        public let type: ContentType
+        public let banners: [Banner]?
+        public let goods: [Goods]?
+        public let styles: [Style]?
 
-        init(type: String, banners: [Banner]?, goods: [Goods]?, styles: [Style]?) {
+        public init(type: String, banners: [Banner]?, goods: [Goods]?, styles: [Style]?) {
             self.type = ContentType(rawValue: type)!
             self.banners = banners
             self.goods = goods
@@ -62,12 +62,12 @@ public struct ProductListEntity: Equatable {
         }
     }
 
-    struct Banner: Equatable {
-        let linkURL: String
-        let thumbnailURL: String
-        let title, description, keyword: String
+    public struct Banner: Equatable {
+        public let linkURL: String
+        public let thumbnailURL: String
+        public let title, description, keyword: String
 
-        init(linkURL: String, thumbnailURL: String, title: String, description: String, keyword: String) {
+        public init(linkURL: String, thumbnailURL: String, title: String, description: String, keyword: String) {
             self.linkURL = linkURL
             self.thumbnailURL = thumbnailURL
             self.title = title
@@ -76,14 +76,14 @@ public struct ProductListEntity: Equatable {
         }
     }
 
-    struct Goods: Equatable {
-        let linkURL: String
-        let thumbnailURL: String
-        let brandName: String
-        let price, saleRate: Int
-        let hasCoupon: Bool
+    public struct Goods: Equatable {
+        public let linkURL: String
+        public let thumbnailURL: String
+        public let brandName: String
+        public let price, saleRate: Int
+        public let hasCoupon: Bool
 
-        init(linkURL: String, thumbnailURL: String, brandName: String, price: Int, saleRate: Int, hasCoupon: Bool) {
+        public init(linkURL: String, thumbnailURL: String, brandName: String, price: Int, saleRate: Int, hasCoupon: Bool) {
             self.linkURL = linkURL
             self.thumbnailURL = thumbnailURL
             self.brandName = brandName
@@ -93,35 +93,35 @@ public struct ProductListEntity: Equatable {
         }
     }
 
-    struct Style: Equatable {
+    public struct Style: Equatable {
         let linkURL: String
         let thumbnailURL: String
 
-        init(linkURL: String, thumbnailURL: String) {
+        public init(linkURL: String, thumbnailURL: String) {
             self.linkURL = linkURL
             self.thumbnailURL = thumbnailURL
         }
     }
 
-    struct Footer: Equatable {
+    public struct Footer: Equatable {
         let type: FooterType
         let title: String
         let iconURL: String?
 
-        init(type: String, title: String, iconURL: String?) {
+        public init(type: String, title: String, iconURL: String?) {
             self.type = FooterType(rawValue: type)!
             self.title = title
             self.iconURL = iconURL
         }
     }
 
-    struct Header: Equatable {
+    public struct Header: Equatable {
         let type: HeaderType
         let title: String
         let iconURL: String?
         let linkURL: String?
 
-        init(title: String, iconURL: String?, linkURL: String?) {
+        public init(title: String, iconURL: String?, linkURL: String?) {
             self.title = title
             self.iconURL = iconURL
             self.linkURL = linkURL

@@ -12,40 +12,40 @@ import RxCocoa
 import ReactorKit
 import RxFlow
 
-class HomeReactor: Reactor, Stepper {
+public class HomeReactor: Reactor, Stepper {
 
-    var initialState: State
-    var steps: PublishRelay<Step> = PublishRelay<Step>()
+    public var initialState: State
+    public var steps: PublishRelay<Step> = PublishRelay<Step>()
 
     private let productListUseCase: ProductListUseCase
 
-    init(productListUseCase: ProductListUseCase) {
+    public init(productListUseCase: ProductListUseCase) {
         self.productListUseCase = productListUseCase
         self.initialState = State()
     }
 
-    struct State {
-        var sections: [SectionModel] = []
-        var prevPages: [Int] = []
-        var currentPages: [Int] = []
-        var bannerPageIndex: Int = 0
+    public struct State {
+        public var sections: [SectionModel] = []
+        public var prevPages: [Int] = []
+        public var currentPages: [Int] = []
+        public var bannerPageIndex: Int = 0
     }
 
-    enum Action {
+    public enum Action {
         case viewDidLoad
         case moreButtonDidTap(sectionIndex: Int)
         case refreshButtonDidTap(sectionIndex: Int)
         case bannerPageIsChanged(index: Int)
     }
 
-    enum Mutation {
+    public enum Mutation {
         case setSections(sections: [SectionModel], pages: [Int])
         case setPages(sectionIndex: Int)
         case setItems(sectionIndex: Int, items: [Item])
         case setBannerPage(index: Int)
     }
 
-    func mutate(action: Action) -> Observable<Mutation> {
+    public func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
             return productListUseCase
@@ -72,7 +72,7 @@ class HomeReactor: Reactor, Stepper {
         }
     }
 
-    func reduce(state: State, mutation: Mutation) -> State {
+    public func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {
         case let .setSections(sections, pages):
@@ -93,7 +93,7 @@ class HomeReactor: Reactor, Stepper {
 
 extension HomeReactor {
 
-    func toSectionModels(from entity: ProductListEntity) -> [SectionModel] {
+    public func toSectionModels(from entity: ProductListEntity) -> [SectionModel] {
         let sections: [SectionModel] = entity.data.map { data in
             let contentType = data.contents.type
             var footer: SectionModel.Footer?
