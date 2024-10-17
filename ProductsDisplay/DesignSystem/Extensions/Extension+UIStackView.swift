@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIStackView {
+public extension UIStackView {
 
     func addHorizontalSpacer(_ width: CGFloat? = nil) {
         let spacer = UIView()

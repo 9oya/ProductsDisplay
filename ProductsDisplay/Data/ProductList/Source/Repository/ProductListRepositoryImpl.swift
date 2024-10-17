@@ -7,15 +7,15 @@
 
 import RxSwift
 
-struct ProductListRepositoryImpl: ProductListRepository {
+public struct ProductListRepositoryImpl: ProductListRepository {
 
     private let remoteProductListDataSource: RemoteProductListDataSource
 
-    init(remoteProductListDataSource: RemoteProductListDataSource) {
+    public init(remoteProductListDataSource: RemoteProductListDataSource) {
         self.remoteProductListDataSource = remoteProductListDataSource
     }
 
-    func fetchProducts() -> Single<ProductListEntity> {
+    public func fetchProducts() -> Single<ProductListEntity> {
         return remoteProductListDataSource
             .fetchProducts()
             .map { $0.toEntity() }

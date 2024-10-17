@@ -10,15 +10,15 @@ import Foundation
 import RxSwift
 import RxMoya
 
-struct RemoteProductListDataSourceImpl: RemoteProductListDataSource {
+public struct RemoteProductListDataSourceImpl: RemoteProductListDataSource {
 
     private let networkManager: NetworkManager
 
-    init(networkManager: NetworkManager) {
+    public init(networkManager: NetworkManager) {
         self.networkManager = networkManager
     }
 
-    func fetchProducts() -> Single<ProductListDTO> {
+    public func fetchProducts() -> Single<ProductListDTO> {
         let endpoint = ProductListAPI.fetchProducts
         return networkManager.request(endpoint)
             .map(ProductListDTO.self)

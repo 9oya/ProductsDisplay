@@ -17,18 +17,26 @@ class HomeViewController: UIViewController, View {
 
     var disposeBag: DisposeBag = DisposeBag()
 
-    var collectionView: UICollectionView!
-
+    // View Properties
+    private var collectionView: UICollectionView!
     private var diffableDataSource: DiffableDataSource!
     private var snapshot: NSDiffableDataSourceSnapshot<SectionKind, Item>!
 
+    // Typealias
     private typealias DiffableDataSource = UICollectionViewDiffableDataSource<SectionKind, Item>
     private typealias BannerCellRegistration = UICollectionView.CellRegistration<BannerCollectionCell, Item>
     private typealias ProductCellRegistration = UICollectionView.CellRegistration<ProductCollectionCell, Item>
     private typealias StyleCellRegistration = UICollectionView.CellRegistration<StyleCollectionCell, Item>
     private typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<HeaderCollectionResusableView>
     private typealias FooterRegistration = UICollectionView.SupplementaryRegistration<FooterCollectionResusableView>
-    private typealias PageFooterRegistration = UICollectionView.SupplementaryRegistration<PageFooterReusableView>
+    private typealias PageFooterRegistration = UICollectionView.SupplementaryRegistration<PageFooterCollectionReusableView>
+
+    // Constants
+    private let sectionContentsInset: NSDirectionalEdgeInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
+    private let itemContentsInset: NSDirectionalEdgeInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+    private let headerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
+    private let footerHeightDimension: NSCollectionLayoutDimension = .absolute(80)
+    private let bannerFooterHeightDimension: NSCollectionLayoutDimension = .absolute(0.1)
 
     func bind(reactor: HomeReactor) {
         setupUI()
@@ -100,15 +108,49 @@ extension HomeViewController: UICollectionViewDelegate {
 
 extension HomeViewController {
 
+    // MARK: UI setup
+
+    func setupUI() {
+        view.backgroundColor = .systemBackground
+
+        collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: getLayout()
+        ).then {
+            $0.isScrollEnabled = true
+            $0.showsHorizontalScrollIndicator = false
+            $0.showsVerticalScrollIndicator = true
+            $0.contentInset = .zero
+            $0.backgroundColor = .clear
+            $0.clipsToBounds = true
+            $0.delegate = self
+        }
+
+        configureCellRegistrationAndDataSource()
+        configureSupplementaryViewRegistrationAndDataSource()
+
+        view.addSubview(collectionView)
+
+        collectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+}
+
+extension HomeViewController {
+
+    // MARK: DiffableDataSource
+
     func configureCellRegistrationAndDataSource() {
-        let bannerCellRegistration = BannerCellRegistration { [weak self] cell, indexPath, item in
+        let bannerCellRegistration = BannerCellRegistration { cell, indexPath, item in
             guard let banner = item.banner else {
                 return
             }
-            guard let self = self, let reactor = self.reactor else {
-                return
-            }
-            cell.apply(imageURL: banner.thumbnailURL)
+            cell.apply(
+                imageURL: banner.thumbnailURL,
+                title: banner.title,
+                subTitle: banner.description
+            )
         }
         let productCellRegistration = ProductCellRegistration { cell, _, item in
             guard let goods = item.goods else {
@@ -182,11 +224,13 @@ extension HomeViewController {
 
             supplementaryView.backgroundColor = .white
             let section = state.sections[indexPath.section]
-            guard let footerType: FooterType = section.footer?.type else {
+            guard let footerType: FooterType = section.footer?.type,
+                  let footerViewType = FooterCollectionResusableView.FooterType(rawValue: footerType.rawValue) else {
                 return
             }
+
             supplementaryView.apply(
-                footerType: footerType,
+                footerType: footerViewType,
                 iconURL: section.footer?.iconURL
             )
 
@@ -208,13 +252,11 @@ extension HomeViewController {
                     .disposed(by: supplementaryView.disposeBag)
             }
         }
-        let pageFooterRegistration = PageFooterRegistration(elementKind: String(describing: PageFooterReusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+        let pageFooterRegistration = PageFooterRegistration(elementKind: String(describing: PageFooterCollectionReusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
             guard let self = self,
                   let reactor = self.reactor else {
                 return
             }
-
-            supplementaryView.apply()
 
             let bannerCnt = reactor.currentState.sections[indexPath.section].items.count
             reactor.state
@@ -237,7 +279,7 @@ extension HomeViewController {
                     using: footerRegistration,
                     for: indexPath
                 )
-            case String(describing: PageFooterReusableView.self):
+            case String(describing: PageFooterCollectionReusableView.self):
                 return collectionView.dequeueConfiguredReusableSupplementary(
                     using: pageFooterRegistration,
                     for: indexPath
@@ -247,6 +289,11 @@ extension HomeViewController {
             }
         }
     }
+}
+
+extension HomeViewController {
+
+    // MARK: Compositional Layout
 
     func getLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ -> NSCollectionLayoutSection? in
@@ -257,6 +304,7 @@ extension HomeViewController {
 
             let sectionModel = state.sections[sectionIndex]
 
+            // Set layout sections
             var layoutSection: NSCollectionLayoutSection
             switch sectionModel.kind {
             case .banner:
@@ -269,9 +317,13 @@ extension HomeViewController {
                 layoutSection = self.getStyleLayout()
             }
 
+            // Set boundary supplementary
             var boundarySupplementaryItems: [NSCollectionLayoutBoundarySupplementaryItem] = []
             if sectionModel.header != nil {
-                let headerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80.0))
+                let headerSize: NSCollectionLayoutSize = .init(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: headerHeightDimension
+                )
                 let header: NSCollectionLayoutBoundarySupplementaryItem = .init(
                     layoutSize: headerSize,
                     elementKind: String(describing: HeaderCollectionResusableView.self),
@@ -282,7 +334,10 @@ extension HomeViewController {
             if sectionModel.footer != nil,
                sectionModel.items.count > state.currentPages[sectionIndex] * sectionModel.kind.itemsPerPage {
 
-                let footerSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(80.0))
+                let footerSize: NSCollectionLayoutSize = .init(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: footerHeightDimension
+                )
                 let footer = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: footerSize,
                     elementKind: String(describing: FooterCollectionResusableView.self),
@@ -291,10 +346,13 @@ extension HomeViewController {
                 boundarySupplementaryItems.append(footer)
             }
             if sectionModel.kind == .banner {
-                let pageFooterSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(0.1))
+                let pageFooterSize: NSCollectionLayoutSize = .init(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: bannerFooterHeightDimension
+                )
                 let pageFooter = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: pageFooterSize,
-                    elementKind: String(describing: PageFooterReusableView.self),
+                    elementKind: String(describing: PageFooterCollectionReusableView.self),
                     alignment: .bottom
                 )
                 boundarySupplementaryItems.append(pageFooter)
@@ -320,12 +378,14 @@ extension HomeViewController {
         let section = NSCollectionLayoutSection(group: mainGroup)
         section.orthogonalScrollingBehavior = .groupPagingCentered
 
-        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, contentOffset, environment in
-            guard let self = self else {
+        section.visibleItemsInvalidationHandler = { [weak reactor] visibleItems, contentOffset, environment in
+            guard let reactor = reactor else {
                 return
             }
             let bannerIndex = Int(max(0, round(contentOffset.x / environment.container.contentSize.width)))
-            self.reactor?.action.onNext(.bannerPageIsChanged(index: bannerIndex))
+            DispatchQueue.main.async {
+                reactor.action.onNext(.bannerPageIsChanged(index: bannerIndex))
+            }
         }
 
         return section
@@ -336,16 +396,16 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
         ))
-        item.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+        item.contentInsets = itemContentsInset
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .fractionalWidth(0.6)
+                heightDimension: .fractionalWidth(6/10)
             ),
             subitems: [item, item, item]
         )
         let section: NSCollectionLayoutSection = .init(group: mainGroup)
-        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
+        section.contentInsets = sectionContentsInset
         section.orthogonalScrollingBehavior = .none
 
         return section
@@ -356,16 +416,16 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(0.3),
             heightDimension: .fractionalHeight(1)
         ))
-        item.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+        item.contentInsets = itemContentsInset
         let mainGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .estimated(UIScreen.main.bounds.width),
-                heightDimension: .fractionalWidth(0.6)
+                heightDimension: .fractionalWidth(0.5)
             ),
             subitems: [item]
         )
         let section = NSCollectionLayoutSection(group: mainGroup)
-        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
+        section.contentInsets = sectionContentsInset
         section.orthogonalScrollingBehavior = .continuous
 
         return section
@@ -376,8 +436,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalHeight(1/2)
         ))
-        itemA.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
-        itemA.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+        itemA.contentInsets = itemContentsInset
         let vGroup: NSCollectionLayoutGroup = .vertical(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1/3),
@@ -390,7 +449,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(2/3),
             heightDimension: .fractionalHeight(1)
         ))
-        itemB.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+        itemB.contentInsets = itemContentsInset
         let hGroup: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
@@ -403,7 +462,7 @@ extension HomeViewController {
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1)
         ))
-        itemC.contentInsets = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+        itemC.contentInsets = itemContentsInset
         let hGroupB: NSCollectionLayoutGroup = .horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
@@ -420,37 +479,7 @@ extension HomeViewController {
         )
         let section = NSCollectionLayoutSection(group: mainVGroup)
         section.orthogonalScrollingBehavior = .none
-        section.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
+        section.contentInsets = sectionContentsInset
         return section
-    }
-
-    func setupUI() {
-        view.backgroundColor = .systemBackground
-
-        configureCollectionView()
-    }
-
-    func configureCollectionView() {
-        collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: getLayout()
-        ).then {
-            $0.isScrollEnabled = true
-            $0.showsHorizontalScrollIndicator = false
-            $0.showsVerticalScrollIndicator = true
-            $0.contentInset = .zero
-            $0.backgroundColor = .clear
-            $0.clipsToBounds = true
-            $0.delegate = self
-        }
-
-        configureCellRegistrationAndDataSource()
-        configureSupplementaryViewRegistrationAndDataSource()
-
-        view.addSubview(collectionView)
-
-        collectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
     }
 }

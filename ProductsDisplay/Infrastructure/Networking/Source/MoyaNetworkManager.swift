@@ -11,37 +11,20 @@ import Moya
 import RxMoya
 import RxSwift
 
-class MoyaNetworkManager: NetworkManager {
+public class MoyaNetworkManager: NetworkManager {
 
-    private lazy var provider: MoyaProvider<MultiTarget> = {
-        return setupProvider()
-    }()
+    private let provider: MoyaProvider<MultiTarget>
     private let loggerPlugin: PluginType
 
-    init(loggerPlugin: PluginType) {
+    public init(
+        loggerPlugin: PluginType,
+        provider: MoyaProvider<MultiTarget>
+    ) {
         self.loggerPlugin = loggerPlugin
+        self.provider = provider
     }
 
-    private func setupProvider(stubClosure: @escaping (MultiTarget) -> StubBehavior = MoyaProvider.neverStub) -> MoyaProvider<MultiTarget> {
-        let session: Session = {
-            let configuration = URLSessionConfiguration.default
-            configuration.timeoutIntervalForRequest = 6
-            return Session(
-                configuration: configuration
-            )
-        }()
-
-        return MoyaProvider<MultiTarget>(
-            endpointClosure: { target in
-                MoyaProvider.defaultEndpointMapping(for: target).adding(newHTTPHeaderFields: target.headers!)
-            },
-            stubClosure: stubClosure,
-            session: session,
-            plugins: [loggerPlugin]
-        )
-    }
-
-    func request(_ endpoint: any Moya.TargetType) -> Single<Moya.Response> {
+    public func request(_ endpoint: any Moya.TargetType) -> Single<Moya.Response> {
         return provider.rx.request(MultiTarget(endpoint))
             .do { [weak self] response in
                 self?.successPrinter()

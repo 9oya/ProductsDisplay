@@ -8,7 +8,7 @@
 import Moya
 import RxSwift
 
-protocol NetworkManager {
+public protocol NetworkManager {
 
-    func request(_ endpoing: TargetType) -> Single<Response>
+    func request(_ endpoint: TargetType) -> Single<Response>
 }

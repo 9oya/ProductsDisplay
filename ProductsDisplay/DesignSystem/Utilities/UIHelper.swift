@@ -10,7 +10,7 @@ import UIKit
 
 import NukeExtensions
 
-class UIHelper {
+public class UIHelper {
 
     @MainActor
     static func loadImage(
@@ -19,7 +19,8 @@ class UIHelper {
         placeholder: UIImage? = UIImage(systemName: "scribble"),
         failureImage: UIImage? = UIImage(systemName: "exclamationmark.triangle"),
         transition: ImageLoadingOptions.Transition? = .fadeIn(duration: 0.5),
-        imageSize: CGSize? = nil
+        imageSize: CGSize? = nil,
+        buttonImagePadding: CGFloat? = nil
     ) {
         NukeExtensions.loadImage(
             with: imageURL,
@@ -36,7 +37,7 @@ class UIHelper {
                         imageView.setImage(
                             image: response.image.resized(to: imageSize),
                             renderingMode: .automatic,
-                            padding: 5
+                            padding: buttonImagePadding
                         )
                     }
                 }
@@ -53,7 +54,7 @@ extension UIButton: Nuke_ImageDisplaying {
     }
 }
 
-extension UIImage {
+private extension UIImage {
     func resized(to size: CGSize) -> UIImage? {
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { _ in

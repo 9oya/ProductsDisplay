@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIButton {
+public extension UIButton {
 
     func setBorder(
         radius: CGFloat,
@@ -41,7 +41,8 @@ extension UIButton {
     }
 
     func setTitle(
-        text: String,
+        text: String = "",
+        attrString: AttributedString? = nil,
         font: UIFont,
         color: UIColor,
         titleAlignment: UIButton.Configuration.TitleAlignment = .automatic,
@@ -50,8 +51,13 @@ extension UIButton {
     ) {
         if configuration == nil { configuration = .plain() }
 
-        var attrStr = AttributedString(text)
-        attrStr.font = font
+        var attrStr: AttributedString
+        if let attrString = attrString {
+            attrStr = attrString
+        } else {
+            attrStr = AttributedString(text)
+            attrStr.font = font
+        }
 
         configuration?.attributedTitle = attrStr
         configuration?.baseForegroundColor = color

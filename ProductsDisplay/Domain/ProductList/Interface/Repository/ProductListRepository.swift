@@ -7,7 +7,7 @@
 
 import RxSwift
 
-protocol ProductListRepository {
+public protocol ProductListRepository {
 
     func fetchProducts() -> Single<ProductListEntity>
 }

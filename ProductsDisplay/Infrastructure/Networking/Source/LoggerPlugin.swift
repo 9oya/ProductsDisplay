@@ -11,10 +11,6 @@ import Moya
 
 struct LoggerPlugin: PluginType {
 
-    func prepare(_ request: URLRequest, target: any TargetType) -> URLRequest {
-        return request
-    }
-
     func willSend(_ request: any RequestType, target: any TargetType) {
         print("🌟 ## URL: \(request.request?.url?.absoluteString ?? "")")
         print("🌟 ## HEADERS")

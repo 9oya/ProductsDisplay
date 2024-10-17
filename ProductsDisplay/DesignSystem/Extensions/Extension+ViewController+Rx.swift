@@ -10,7 +10,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-extension Reactive where Base: UIViewController {
+public extension Reactive where Base: UIViewController {
 
     var viewDidLoad: ControlEvent<Void> {
         let source = self.methodInvoked(#selector(Base.viewDidLoad))
