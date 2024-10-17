@@ -35,7 +35,7 @@ final class HomeReactorTests: XCTestCase {
         homeReactor = nil
     }
 
-    func testViewDidLoadAction() {
+    func testCurrentStatesWithViewDidLoadAction() {
         // given
         let entity = ProductListEntity(data: [.init(contents: .init(type: ContentType.banner.rawValue, banners: [], goods: nil, styles: nil), header: nil, footer: nil)])
         mockProductListUseCase.stubbedProductListEntity = entity
@@ -50,7 +50,7 @@ final class HomeReactorTests: XCTestCase {
         XCTAssertEqual(homeReactor.currentState.prevPages.count, 1)
     }
 
-    func testMoreButtonDidTapAction() {
+    func testCurrentPagesStateWithMoreButtonDidTapAction() {
         // given
         let entity = ProductListEntity(data: [.init(contents: .init(type: ContentType.banner.rawValue, banners: [], goods: nil, styles: nil), header: nil, footer: nil)])
         mockProductListUseCase.stubbedProductListEntity = entity
@@ -73,7 +73,30 @@ final class HomeReactorTests: XCTestCase {
         ])
     }
 
-    func testRefreshAction() {
+    func testPrevPagesStateWithMoreButtonDidTapAction() {
+        // given
+        let entity = ProductListEntity(data: [.init(contents: .init(type: ContentType.banner.rawValue, banners: [], goods: nil, styles: nil), header: nil, footer: nil)])
+        mockProductListUseCase.stubbedProductListEntity = entity
+
+        // when
+        scheduler.createHotObservable([
+            .next(0, .viewDidLoad),
+            .next(10, .moreButtonDidTap(sectionIndex: 0))
+        ])
+        .subscribe(homeReactor.action)
+        .disposed(by: disposeBag)
+
+        // then
+        let response = scheduler.start(created: 0, subscribed: 0, disposed: 1000) {
+            self.homeReactor.state.map { $0.prevPages }
+        }
+        XCTAssertEqual(response.events.map { $0.value.element }, [
+            [1],
+            [1]
+        ])
+    }
+
+    func testSectionItemsStateWithRefreshAction() {
         // given
         let sectionIndex = 0
         let banners: [ProductListEntity.Banner] = [
@@ -103,9 +126,8 @@ final class HomeReactorTests: XCTestCase {
         ])
     }
 
-    func testBannerPageIsChanged() {
+    func testBannerPageIndexStateWithBannerPageIsChanged() {
         // given
-        let sectionIndex = 0
         let banners: [ProductListEntity.Banner] = [
             .init(linkURL: "", thumbnailURL: "", title: "", description: "", keyword: ""),
             .init(linkURL: "", thumbnailURL: "", title: "", description: "", keyword: ""),
