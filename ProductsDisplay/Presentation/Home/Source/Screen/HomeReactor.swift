@@ -28,18 +28,21 @@ class HomeReactor: Reactor, Stepper {
         var sections: [SectionModel] = []
         var prevPages: [Int] = []
         var currentPages: [Int] = []
+        var bannerPageIndex: Int = 0
     }
 
     enum Action {
         case viewDidLoad
         case moreButtonDidTap(sectionIndex: Int)
         case refreshButtonDidTap(sectionIndex: Int)
+        case bannerPageIsChanged(index: Int)
     }
 
     enum Mutation {
         case setSections([SectionModel])
         case setPages(sectionIndex: Int)
         case setItems(sectionIndex: Int)
+        case setBannerPage(index: Int)
     }
 
     func mutate(action: Action) -> Observable<Mutation> {
@@ -54,6 +57,8 @@ class HomeReactor: Reactor, Stepper {
             return .just(.setPages(sectionIndex: sectionIndex))
         case .refreshButtonDidTap(let sectionIndex):
             return .just(.setItems(sectionIndex: sectionIndex))
+        case .bannerPageIsChanged(let index):
+            return .just(.setBannerPage(index: index))
         }
     }
 
@@ -69,6 +74,8 @@ class HomeReactor: Reactor, Stepper {
             newState.currentPages[sectionIndex] += 1
         case .setItems(let sectionIndex):
             newState.sections[sectionIndex].items = newState.sections[sectionIndex].items.shuffled()
+        case .setBannerPage(let index):
+            newState.bannerPageIndex = index
         }
         return newState
     }

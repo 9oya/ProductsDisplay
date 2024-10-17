@@ -64,6 +64,7 @@
 		BF772EF32CBB992000187EA8 /* ViewComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF22CBB992000187EA8 /* ViewComponent.swift */; };
 		BF772EF52CBBD96E00187EA8 /* ProductCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF42CBBD96E00187EA8 /* ProductCollectionCell.swift */; };
 		BF772EF72CBBD9A200187EA8 /* StyleCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF772EF62CBBD9A200187EA8 /* StyleCollectionCell.swift */; };
+		BFAB87D02CC09C680073A9CF /* PageFooterReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAB87CF2CC09C680073A9CF /* PageFooterReusableView.swift */; };
 		BFD98A262CBF41F800B8D687 /* Extension+UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD98A252CBF41F800B8D687 /* Extension+UIButton.swift */; };
 		BFD98A282CBF421B00B8D687 /* Extension+UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD98A272CBF421B00B8D687 /* Extension+UIStackView.swift */; };
 /* End PBXBuildFile section */
@@ -128,6 +129,7 @@
 		BF772EF22CBB992000187EA8 /* ViewComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewComponent.swift; sourceTree = "<group>"; };
 		BF772EF42CBBD96E00187EA8 /* ProductCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCollectionCell.swift; sourceTree = "<group>"; };
 		BF772EF62CBBD9A200187EA8 /* StyleCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleCollectionCell.swift; sourceTree = "<group>"; };
+		BFAB87CF2CC09C680073A9CF /* PageFooterReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageFooterReusableView.swift; sourceTree = "<group>"; };
 		BFD98A252CBF41F800B8D687 /* Extension+UIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIButton.swift"; sourceTree = "<group>"; };
 		BFD98A272CBF421B00B8D687 /* Extension+UIStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIStackView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -544,6 +546,7 @@
 			isa = PBXGroup;
 			children = (
 				BF772EE62CBB79E100187EA8 /* BannerCollectionCell.swift */,
+				BFAB87CF2CC09C680073A9CF /* PageFooterReusableView.swift */,
 				BF772EE82CBB7AE500187EA8 /* FooterCollectionResusableView.swift */,
 				BF772EEA2CBB7AEB00187EA8 /* HeaderCollectionResusableView.swift */,
 				BF772EF42CBBD96E00187EA8 /* ProductCollectionCell.swift */,
@@ -763,6 +766,7 @@
 				BF772E262CBA2E9D00187EA8 /* SceneDelegate.swift in Sources */,
 				BF772EB42CBA4BCC00187EA8 /* ProductListRepositoryImpl.swift in Sources */,
 				BF772EB02CBA4BAB00187EA8 /* ProductListEntity.swift in Sources */,
+				BFAB87D02CC09C680073A9CF /* PageFooterReusableView.swift in Sources */,
 				BF772ED32CBA4E6000187EA8 /* HomeReactor.swift in Sources */,
 				BF772EDB2CBA59FA00187EA8 /* LoggerPlugin.swift in Sources */,
 				BF772EEE2CBB801600187EA8 /* SectionModel.swift in Sources */,

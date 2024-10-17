@@ -28,6 +28,7 @@ class HomeViewController: UIViewController, View {
     private typealias StyleCellRegistration = UICollectionView.CellRegistration<StyleCollectionCell, Item>
     private typealias HeaderRegistration = UICollectionView.SupplementaryRegistration<HeaderCollectionResusableView>
     private typealias FooterRegistration = UICollectionView.SupplementaryRegistration<FooterCollectionResusableView>
+    private typealias PageFooterRegistration = UICollectionView.SupplementaryRegistration<PageFooterReusableView>
 
     func bind(reactor: HomeReactor) {
         setupUI()
@@ -100,12 +101,14 @@ extension HomeViewController: UICollectionViewDelegate {
 extension HomeViewController {
 
     func configureCellRegistrationAndDataSource() {
-        let bannerCellRegistration = BannerCellRegistration { cell, _, item in
+        let bannerCellRegistration = BannerCellRegistration { [weak self] cell, indexPath, item in
             guard let banner = item.banner else {
                 return
             }
-            let imageURL = banner.thumbnailURL
-            cell.apply(imageURL: imageURL)
+            guard let self = self, let reactor = self.reactor else {
+                return
+            }
+            cell.apply(imageURL: banner.thumbnailURL)
         }
         let productCellRegistration = ProductCellRegistration { cell, _, item in
             guard let goods = item.goods else {
@@ -204,6 +207,22 @@ extension HomeViewController {
                     .bind(to: reactor.action)
                     .disposed(by: supplementaryView.disposeBag)
             }
+        }
+        let pageFooterRegistration = PageFooterRegistration(elementKind: String(describing: PageFooterReusableView.self)) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self = self,
+                  let reactor = self.reactor else {
+                return
+            }
+
+            supplementaryView.apply()
+
+            let bannerCnt = reactor.currentState.sections[indexPath.section].items.count
+            reactor.state
+                .map { $0.bannerPageIndex }
+                .asObservable()
+                .map { "\($0 + 1)/\(bannerCnt)" }
+                .bind(to: supplementaryView.pageNumberLabel.rx.text)
+                .disposed(by: supplementaryView.disposeBag)
 
         }
         diffableDataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
@@ -216,6 +235,11 @@ extension HomeViewController {
             case String(describing: FooterCollectionResusableView.self):
                 return collectionView.dequeueConfiguredReusableSupplementary(
                     using: footerRegistration,
+                    for: indexPath
+                )
+            case String(describing: PageFooterReusableView.self):
+                return collectionView.dequeueConfiguredReusableSupplementary(
+                    using: pageFooterRegistration,
                     for: indexPath
                 )
             default:
@@ -266,6 +290,15 @@ extension HomeViewController {
                 )
                 boundarySupplementaryItems.append(footer)
             }
+            if sectionModel.kind == .banner {
+                let pageFooterSize: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(0.1))
+                let pageFooter = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: pageFooterSize,
+                    elementKind: String(describing: PageFooterReusableView.self),
+                    alignment: .bottom
+                )
+                boundarySupplementaryItems.append(pageFooter)
+            }
             layoutSection.boundarySupplementaryItems = boundarySupplementaryItems
 
             return layoutSection
@@ -286,6 +319,14 @@ extension HomeViewController {
         )
         let section = NSCollectionLayoutSection(group: mainGroup)
         section.orthogonalScrollingBehavior = .groupPagingCentered
+
+        section.visibleItemsInvalidationHandler = { [weak self] visibleItems, contentOffset, environment in
+            guard let self = self else {
+                return
+            }
+            let bannerIndex = Int(max(0, round(contentOffset.x / environment.container.contentSize.width)))
+            self.reactor?.action.onNext(.bannerPageIsChanged(index: bannerIndex))
+        }
 
         return section
     }
