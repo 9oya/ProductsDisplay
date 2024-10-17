@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum SectionKind: String {
+public enum SectionKind: String {
     case banner = "BANNER"
     case grid = "GRID"
     case scroll = "SCROLL"
@@ -40,11 +40,11 @@ enum SectionKind: String {
     }
 }
 
-struct SectionModel: Hashable {
-    let kind: SectionKind
-    var items: [Item]
-    let header: Header?
-    let footer: Footer?
+public struct SectionModel: Hashable {
+    public let kind: SectionKind
+    public var items: [Item]
+    public let header: Header?
+    public let footer: Footer?
 
     init(
         contentType: ContentType,
@@ -58,7 +58,7 @@ struct SectionModel: Hashable {
         self.header = header
     }
 
-    struct Footer: Hashable {
+    public struct Footer: Hashable {
         let type: FooterType
         let title: String
         let iconURL: String?
@@ -70,7 +70,7 @@ struct SectionModel: Hashable {
         }
     }
 
-    struct Header: Hashable {
+    public struct Header: Hashable {
         let type: HeaderType
         let title: String
         let iconURL: String?
@@ -94,7 +94,7 @@ struct SectionModel: Hashable {
     }
 }
 
-struct Item: Hashable {
+public struct Item: Hashable {
     let banner: Banner?
     let goods: Goods?
     let style: Style?
@@ -140,7 +140,7 @@ struct Item: Hashable {
         }
     }
 
-    struct Banner: Hashable {
+    public struct Banner: Hashable {
         let linkURL: String
         let thumbnailURL: String
         let title: String
@@ -156,7 +156,7 @@ struct Item: Hashable {
         }
     }
 
-    struct Goods: Hashable {
+    public struct Goods: Hashable {
         let linkURL: String
         let thumbnailURL: String
         let brandName: String
@@ -173,7 +173,7 @@ struct Item: Hashable {
         }
     }
 
-    struct Style: Hashable {
+    public struct Style: Hashable {
         let linkURL: String
         let thumbnailURL: String
 
