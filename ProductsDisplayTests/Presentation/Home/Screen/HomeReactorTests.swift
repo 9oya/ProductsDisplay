@@ -41,13 +41,29 @@ final class HomeReactorTests: XCTestCase {
         mockProductListUseCase.stubbedProductListEntity = entity
 
         // when
-        homeReactor.action.onNext(.viewDidLoad)
+        scheduler.createHotObservable([
+            .next(0, .viewDidLoad)
+        ])
+        .subscribe(homeReactor.action)
+        .disposed(by: disposeBag)
+
+        let response = scheduler.start(created: 0, subscribed: 0, disposed: 1000) {
+            self.homeReactor.state
+        }
 
         // then
-        XCTAssertEqual(homeReactor.currentState.sections.count, 1)
-        XCTAssertEqual(homeReactor.currentState.sections.first?.kind, SectionKind.banner)
-        XCTAssertEqual(homeReactor.currentState.currentPages.count, 1)
-        XCTAssertEqual(homeReactor.currentState.prevPages.count, 1)
+        XCTAssertEqual(response.events.map { $0.value.element?.sections.count }, [
+            1
+        ])
+        XCTAssertEqual(response.events.map { $0.value.element?.sections.first?.kind }, [
+            .banner
+        ])
+        XCTAssertEqual(response.events.map { $0.value.element?.currentPages.count }, [
+            1
+        ])
+        XCTAssertEqual(response.events.map { $0.value.element?.prevPages.count }, [
+            1
+        ])
     }
 
     func testCurrentPagesStateWithMoreButtonDidTapAction() {
