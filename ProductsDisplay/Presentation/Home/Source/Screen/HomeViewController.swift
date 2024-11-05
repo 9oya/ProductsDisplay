@@ -150,14 +150,18 @@ extension HomeViewController {
         guard bannerCount > 1 else {
             return
         }
-        let currentPage = state.bannerPageIndex
-        var nextPage = currentPage + 1
+        let currentPageIndex = state.bannerPageIndex
+        var nextPageIndex = currentPageIndex + 1
         var animated: Bool = true
-        if nextPage >= bannerCount {
-            nextPage = nextPage % bannerCount
+        if nextPageIndex >= bannerCount {
+            nextPageIndex = nextPageIndex % bannerCount
             animated = false
         }
-        collectionView.scrollToItem(at: IndexPath(item: nextPage, section: sectionIndex), at: .left, animated: animated)
+        collectionView.scrollToItem(
+            at: IndexPath(item: nextPageIndex, section: sectionIndex),
+            at: .left, 
+            animated: animated
+        )
     }
 
     private func cancelTimer() {
